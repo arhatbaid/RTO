@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">RTO</string>
+
+
+    <!--Login Sign Up-->
+    <string name="user">User</string>
+    <string name="user_type">User Type</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="officer">Officer</string>
+    <string name="login">Login</string>
+    <string name="existing_user">Existing user? Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="new_user">New User? Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="state">State</string>
+    <string name="city">City</string>
+    <string name="address">Address</string>
+    <string name="mobile">Mobile</string>
+
+    <!--Menu Drawer List-->
+    <string-array name="menu_item">
+        <item>Existing Vehicle List</item>
+        <item>Register New Vehicle</item>
+        <item>Add Number Plate</item>
+    </string-array>
+
+
+    <!--Frag Register Vehicle-->
+    <string name="register_vehicle">Register Vehicle</string>
+    <string name="vehicle_name">Vehicle Name</string>
+    <string name="vehicle_type">Vehicle Type</string>
+    <string name="state_code">State Code</string>
+    <string name="series_number">Series Number</string>
+    <string name="vehicle_number">Vehicle Number</string>
+    <string name="vehicle_buying_date">Vehicle Buying Date</string>
+    <string name="puc_number">PUC Number</string>
+    <string name="puc_purchase_date">PUC Purchase Date</string>
+    <string name="save">SAVE</string>
+</resources>

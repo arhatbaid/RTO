@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/common_padding"
+    android:layout_marginRight="@dimen/common_padding"
+    android:layout_marginTop="@dimen/small_padding">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/txtVehicleName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/vehicle_name"
+                android:inputType="text|textNoSuggestions" />
+
+            <EditText
+                android:id="@+id/txtVehicleType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/vehicle_type"
+                android:inputType="text|textNoSuggestions" />
+
+            <EditText
+                android:id="@+id/txtStateCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/state_code"
+                android:inputType="text|textNoSuggestions" />
+
+
+            <EditText
+                android:id="@+id/txtSeriesNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/series_number"
+                android:inputType="text|textNoSuggestions" />
+
+            <EditText
+                android:id="@+id/txtVehicleNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/vehicle_number"
+                android:inputType="text|textNoSuggestions" />
+
+            <EditText
+                android:id="@+id/txtVehicleBuyDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/vehicle_buying_date"
+                android:inputType="text|textNoSuggestions" />
+
+            <EditText
+                android:id="@+id/txtPUCNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/puc_number"
+                android:inputType="text|textNoSuggestions" />
+
+            <EditText
+                android:id="@+id/txtPUCPurchaseDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/puc_purchase_date"
+                android:inputType="text|textNoSuggestions" />
+
+            <Button
+                android:id="@+id/btnAddVehicle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/small_padding"
+                android:layout_marginTop="@dimen/small_padding"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@android:color/white"
+                android:text="@string/register_vehicle" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
