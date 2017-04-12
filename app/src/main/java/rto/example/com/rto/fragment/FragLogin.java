@@ -14,9 +14,17 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import rto.example.com.rto.R;
 import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.activity.ActLoginSignUp;
+import rto.example.com.rto.frameworks.signin.SigninRequest;
+import rto.example.com.rto.frameworks.signin.SigninResponse;
+import rto.example.com.rto.frameworks.signup.SignupRequest;
+import rto.example.com.rto.frameworks.signup.SignupRespose;
+import rto.example.com.rto.webhelper.WebAPIClient;
 
 
 public class FragLogin extends Fragment implements View.OnClickListener {
@@ -62,6 +70,31 @@ public class FragLogin extends Fragment implements View.OnClickListener {
         btnLogin.setOnClickListener(this);
         lblSignUp.setOnClickListener(this);
     }
+
+
+//    private void callSignIn(SigninRequest signinRequest) {
+//       // rlLoading.setVisibility(View.VISIBLE);
+//        WebAPIClient.getInstance(getActivity()).login_user(signinRequest, new Callback<SigninResponse>() {
+//            @Override
+//            public void onResponse(Call<SigninResponse> call, Response<SigninResponse> response) {
+//                SigninResponse getStateResponse = response.body();
+//                if (getStateResponse.getFlag().equals("true")) {
+//                   // rlLoading.setVisibility(View.GONE);
+//
+//                    getActivity().finish();
+//                    startActivity(new Intent(getActivity(),ActHomeUser.class));
+//
+//                } else if (getStateResponse.getFlag().equals("false")) {
+//                    rlLoading.setVisibility(View.GONE);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SigninResponse> call, Throwable t) {
+//                rlLoading.setVisibility(View.GONE);
+//            }
+//        });
+//    }
 
     @Override
     public void onClick(View v) {

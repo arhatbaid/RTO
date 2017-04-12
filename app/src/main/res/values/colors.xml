@@ -3,4 +3,20 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="black">#ff000000</color>
+    <color name="white">#ffffff</color>
+
+    <color name="statusbar">#0d3046</color>
+    <color name="grey_overlay">#95EEEEEE</color>
+    <color name="theme_blue">#155074</color>
+
+
+    <!--Home-->
+    <color name="light_green">#39B67C</color>
+    <color name="orange">#e69310</color>
+    <color name="pink">#fe0a5a</color>
+    <color name="dark_pink">#ffe91e63</color>
+    <color name="yellow">#ffff9800</color>
+    <color name="neavy">#ff303f9f</color>
+    <color name="light_blue">#82CAFA</color>
 </resources>

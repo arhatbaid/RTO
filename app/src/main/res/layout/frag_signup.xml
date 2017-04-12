@@ -2,11 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:layout_marginLeft="@dimen/common_padding"
     android:layout_marginRight="@dimen/common_padding"
     android:layout_marginTop="@dimen/common_padding">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -88,6 +92,7 @@
                 android:text="@string/user_type" />
 
             <RadioGroup
+                android:id="@+id/rgUserType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -115,6 +120,7 @@
                 android:text="@string/gender" />
 
             <RadioGroup
+                android:id="@+id/rgSex"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -135,30 +141,75 @@
             </RadioGroup>
 
 
+
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lblLogin"
+            android:layout_marginTop="@dimen/common_padding"
+
+            android:background="@color/colorPrimary"
+            android:text="@string/sign_up"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/lblLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/existing_user"
+            android:padding="@dimen/very_small_padding"
+            android:layout_marginTop="@dimen/small_padding"
+            android:layout_marginBottom="@dimen/huge_padding"
+            android:textColor="@android:color/black" />
+
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/btnSignUp"
+        <RelativeLayout
+        android:id="@+id/rlLoading"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/lblLogin"
-        android:layout_marginTop="@dimen/common_padding"
-        android:background="@color/colorPrimary"
-        android:text="@string/sign_up"
-        android:textColor="@android:color/white" />
+        android:layout_height="match_parent"
+        android:background="@color/grey_overlay"
+        android:clickable="true"
+        android:visibility="visible">
 
-    <TextView
-        android:id="@+id/lblLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/existing_user"
-        android:padding="@dimen/very_small_padding"
-        android:layout_marginTop="@dimen/small_padding"
-        android:layout_marginBottom="@dimen/huge_padding"
-        android:textColor="@android:color/black" />
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/common_padding"
+            app:cardElevation="10dp"
+            app:cardUseCompatPadding="true">
 
+            <LinearLayout
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/common_padding"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/smallPadding"
+                    android:text="Loading..."
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16dp" />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </RelativeLayout></FrameLayout>
 
 </RelativeLayout>
