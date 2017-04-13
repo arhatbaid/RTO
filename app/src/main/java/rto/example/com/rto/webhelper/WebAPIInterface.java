@@ -5,7 +5,12 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
+import rto.example.com.rto.frameworks.addvehicle.AddVehicleRequest;
+import rto.example.com.rto.frameworks.addvehicle.AddVehicleResponse;
 import rto.example.com.rto.frameworks.city.GetCityResponse;
+import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleResponse;
+import rto.example.com.rto.frameworks.editvehicle.EditVehicleResponse;
+import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
 import rto.example.com.rto.frameworks.signin.SigninResponse;
 import rto.example.com.rto.frameworks.signup.SignupRespose;
 import rto.example.com.rto.frameworks.state.GetStateResponse;
@@ -28,22 +33,7 @@ public interface WebAPIInterface {
     Call<SignupRespose> register_user(@Field("api_id") String api_id,
                                       @Field("api_secret") String api_secret,
                                       @Field("api_request") String api_request,
-                                      @Field("data") String data);@FormUrlEncoded
-    @POST(Endpoint.POST_URL)
-    Call<GetCityResponse> get_city(@Field("api_id") String api_id,
-                                      @Field("api_secret") String api_secret,
-                                      @Field("api_request") String api_request,
                                       @Field("data") String data);
-
-
-
-//    @FormUrlEncoded
-//    @POST(Endpoint.POST_URL)
-//    Call<UpdateProfileResponse> update_profile(@Field("api_id") String api_id,
-//                                               @Field("api_secret") String api_secret,
-//                                               @Field("api_request") String api_request,
-//                                               @Field("data") String data);
-
 
     @FormUrlEncoded
     @POST(Endpoint.POST_URL)
@@ -52,6 +42,45 @@ public interface WebAPIInterface {
                                      @Field("api_request") String api_request,
                                      @Field("data") String data);
 
+    @POST(Endpoint.POST_URL)
+    Call<GetCityResponse> get_city(@Field("api_id") String api_id,
+                                   @Field("api_secret") String api_secret,
+                                   @Field("api_request") String api_request,
+                                   @Field("data") String data);
+
+    @FormUrlEncoded
+    @POST(Endpoint.POST_URL)
+    Call<GetVehicleResponse> get_user_vehicle(@Field("api_id") String api_id,
+                                              @Field("api_secret") String api_secret,
+                                              @Field("api_request") String api_request,
+                                              @Field("data") String data);
+
+    @FormUrlEncoded
+    @POST(Endpoint.POST_URL)
+    Call<AddVehicleResponse> add_vehicle(@Field("api_id") String api_id,
+                                         @Field("api_secret") String api_secret,
+                                         @Field("api_request") String api_request,
+                                         @Field("data") String data);
+    @FormUrlEncoded
+    @POST(Endpoint.POST_URL)
+    Call<EditVehicleResponse> edit_vehicle(@Field("api_id") String api_id,
+                                           @Field("api_secret") String api_secret,
+                                           @Field("api_request") String api_request,
+                                           @Field("data") String data);
+    @FormUrlEncoded
+    @POST(Endpoint.POST_URL)
+    Call<DeleteVehicleResponse> delete_vehicle(@Field("api_id") String api_id,
+                                               @Field("api_secret") String api_secret,
+                                               @Field("api_request") String api_request,
+                                               @Field("data") String data);
+
+
+//    @FormUrlEncoded
+//    @POST(Endpoint.POST_URL)
+//    Call<UpdateProfileResponse> update_profile(@Field("api_id") String api_id,
+//                                               @Field("api_secret") String api_secret,
+//                                               @Field("api_request") String api_request,
+//                                               @Field("data") String data);
 
 
 //    @FormUrlEncoded

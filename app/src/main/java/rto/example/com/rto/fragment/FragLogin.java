@@ -102,6 +102,7 @@ public class FragLogin extends Fragment implements View.OnClickListener {
                     Prefs.putString(PrefsKeys.status, signinResponse.getData().getStatus());
                     startActivity(new Intent(getActivity(), ActHomeUser.class));
                     getActivity().finish();
+                    startActivity(new Intent(getActivity(),ActHomeUser.class));
                 }
             }
 

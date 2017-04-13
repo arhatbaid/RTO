@@ -18,8 +18,16 @@ import okhttp3.OkHttpClient;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rto.example.com.rto.frameworks.addvehicle.AddVehicleRequest;
+import rto.example.com.rto.frameworks.addvehicle.AddVehicleResponse;
 import rto.example.com.rto.frameworks.city.GetCityRequest;
 import rto.example.com.rto.frameworks.city.GetCityResponse;
+import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleRequest;
+import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleResponse;
+import rto.example.com.rto.frameworks.editvehicle.EditVehicleRequest;
+import rto.example.com.rto.frameworks.editvehicle.EditVehicleResponse;
+import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
+import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
 import rto.example.com.rto.frameworks.signin.SigninRequest;
 import rto.example.com.rto.frameworks.signin.SigninResponse;
 import rto.example.com.rto.frameworks.signup.SignupRequest;
@@ -110,6 +118,30 @@ public class WebAPIClient {
         String api_request = "login_user";
         String data = new Gson().toJson(Request);
         json().login_user(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void get_user_vehicle(GetVehicleRequest Request, Callback<GetVehicleResponse> callback) {
+        String api_request = "get_user_vehicle";
+        String data = new Gson().toJson(Request);
+        json().get_user_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void add_vehicle(AddVehicleRequest Request, Callback<AddVehicleResponse> callback) {
+        String api_request = "add_vehicle";
+        String data = new Gson().toJson(Request);
+        json().add_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void edit_vehicle(EditVehicleRequest Request, Callback<EditVehicleResponse> callback) {
+        String api_request = "edit_vehicle";
+        String data = new Gson().toJson(Request);
+        json().edit_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void delete_vehicle(DeleteVehicleRequest Request, Callback<DeleteVehicleResponse> callback) {
+        String api_request = "delete_vehicle";
+        String data = new Gson().toJson(Request);
+        json().delete_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
     }
 
     public void register_user(SignupRequest Request, Callback<SignupRespose> callback) {

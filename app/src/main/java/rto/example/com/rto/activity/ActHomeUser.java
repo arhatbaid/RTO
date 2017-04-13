@@ -1,8 +1,10 @@
 package rto.example.com.rto.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -92,12 +94,34 @@ View.OnClickListener{
                 ft.commit();
                 break;
             case 3:
-                Prefs.clear();
-                startActivity(new Intent(this, ActHomeUser.class));
-                finish();
+                showConfirmDialog();
                 break;
         }
     }
+
+    private void showConfirmDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        dialog.dismiss();
+                        Prefs.clear();
+                        finish();
+                        startActivity(new Intent(ActHomeUser.this, ActLoginSignUp.class));
+                        //notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        dialog.dismiss();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
 
     @Override
     public void onClick(View view) {
