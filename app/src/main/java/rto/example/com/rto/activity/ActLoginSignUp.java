@@ -12,6 +12,6 @@ public class ActLoginSignUp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_login_sign_up);
-        getSupportFragmentManager().beginTransaction().add(R.id.fragContainer, new FragLogin(), FragLogin.class.getName()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, new FragLogin(), FragLogin.class.getName()).commit();
     }
 }

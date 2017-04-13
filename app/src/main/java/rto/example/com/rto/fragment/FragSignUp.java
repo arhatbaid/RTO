@@ -63,7 +63,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     private RelativeLayout rlLoading;
 
     private ProgressDialog progressDialog = null;
-    private String STATE_ID = "";
+    private String STATE_ID = "", CITY_ID = "";
     private ArrayList<GetStateData> listState = new ArrayList<>();
     private ArrayList<GetCityData> listCity = new ArrayList<>();
 
@@ -71,17 +71,11 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view=inflater.inflate(R.layout.frag_signup, container, false);
+        View view = inflater.inflate(R.layout.frag_signup, container, false);
         findViews(view);
         callState();
         return view;
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
 
     private void findViews(View view) {
         txtEmail = (EditText) view.findViewById(R.id.txtEmail);
@@ -147,7 +141,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             @Override
             public void onFailure(Call<GetStateResponse> call, Throwable t) {
                 rlLoading.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "state_err"+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "state_err" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -162,8 +156,8 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Call<GetCityResponse> call, Response<GetCityResponse> response) {
                 GetCityResponse getCityResponse = response.body();
+                listCity.clear();
                 if (getCityResponse.getFlag().equals("true")) {
-                    listCity.clear();
                     listCity.addAll(getCityResponse.getData());
                     rlLoading.setVisibility(View.GONE);
                     /*ArrayList<String> tmpData = new ArrayList<>();
@@ -198,33 +192,53 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             }
         }
     }
-    private void openState() {
+
+    private void openStateDilaog() {
+        int selectedOption = -1;
         ArrayList<String> tmpData = new ArrayList<>();
         if (listState.size() > 0) {
-            for (int i = 0, count = listState.size(); i < count; i++) {
-                tmpData.add(listState.get(i).getStateName());
+            if (Prefs.getString(PrefsKeys.State, "").isEmpty()){
+                for (int i = 0, count = listState.size(); i < count; i++) {
+                    tmpData.add(listState.get(i).getStateName());
+                }
+            } else {
+                for (int i = 0, count = listState.size(); i < count; i++) {
+                    tmpData.add(listState.get(i).getStateName());
+                    if(listState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.State, ""))){
+                        selectedOption = i;
+                    }
+                }
             }
         }
-        placeDialogue(Constants.STATE, tmpData);
+        placeDialogue(Constants.STATE, tmpData, selectedOption);
     }
 
-    private void openCity() {
+    private void openCityDialog() {
+        int selectedOption = -1;
         ArrayList<String> tmpData = new ArrayList<>();
         if (listCity.size() > 0) {
-            for (int i = 0, count = listCity.size(); i < count; i++) {
-                tmpData.add(listCity.get(i).getCityName());
+            if (Prefs.getString(PrefsKeys.City, "").isEmpty()){
+                for (int i = 0, count = listCity.size(); i < count; i++) {
+                    tmpData.add(listCity.get(i).getCityName());
+                }
+            } else {
+                for (int i = 0, count = listCity.size(); i < count; i++) {
+                    tmpData.add(listCity.get(i).getCityName());
+                    if(listCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.City, ""))){
+                        selectedOption = i;
+                    }
+                }
             }
         }
-        placeDialogue(Constants.CITY, tmpData);
+        placeDialogue(Constants.CITY, tmpData, selectedOption);
     }
 
-    private void placeDialogue(final String type, ArrayList<String> tmpData) {
-
+    private void placeDialogue(final String type, ArrayList<String> tmpData, int selectedOption) {
+    //Todo show the last selected option
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
 
         builderSingle.setTitle("Select " + type + " :-");
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice, tmpData);
-
 
         builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -233,22 +247,27 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             }
         });
 
-        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+
+        builderSingle.setSingleChoiceItems(arrayAdapter, selectedOption,new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String strName = arrayAdapter.getItem(which);
                 if (type.equalsIgnoreCase(Constants.STATE)) {
                     STATE_ID = listState.get(which).getStateId();
                     txtState.setText(strName);
+                    Prefs.putString(PrefsKeys.State, strName);
+                    Prefs.putString(PrefsKeys.City, "");
                     txtCity.setText("");
                     callCity();
                     txtState.setError(null);
                     txtCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
                     txtCity.setText(strName);
-
                     txtCity.setError(null);
+                    CITY_ID = listCity.get(which).getCityId();
+                    Prefs.putString(PrefsKeys.City, strName);
                 }
+                dialog.dismiss();
             }
         });
         builderSingle.show();
@@ -262,29 +281,29 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         boolean female = rbMale.isChecked();
         if (!(male || female)) {
             Toast.makeText(getActivity(), "Please select gender", Toast.LENGTH_SHORT).show();
-            //YoYo.with(Techniques.Shake).duration(400).playOn(rdoGroupSex);
             return;
         }
 
-        boolean officer = rbOfficer.isChecked();
+        //No need to do
+       /* boolean officer = rbOfficer.isChecked();
         boolean user = rbUser.isChecked();
         if (!(officer || user)) {
             Toast.makeText(getActivity(), "Please select user type", Toast.LENGTH_SHORT).show();
             //YoYo.with(Techniques.Shake).duration(400).playOn(rdoGroupSex);
             return;
-        }
+        }*/
 
 //        boolean value5 = AppHelper.CheckEditText(txtCountry);
         boolean state = AppHelper.CheckEditText(txtState);
         boolean city = AppHelper.CheckEditText(txtCity);
-      //  boolean value2 = checkTc.isChecked();
+        //  boolean value2 = checkTc.isChecked();
 
 //        if (!value2) {
 //            YoYo.with(Techniques.Shake).duration(400).playOn(checkTc);
 //            return;
 //        }
 
-        if (fname&&lname && state && city) {
+        if (fname && lname && state && city) {
             String SEX = "";
             String TYPE = "";
             int selectedSexId = rgSex.getCheckedRadioButtonId();
@@ -296,19 +315,15 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
                 SEX = "f";
             }
 
-            if (selectedTypeId == rbUser.getId()) {
-                TYPE = "3";
-            } else if (selectedTypeId == rbOfficer.getId()) {
-                TYPE = "2";
-            }
+
             SignupRequest signupRequest = new SignupRequest();
 
             signupRequest.setFirstname(txtFirstName.getText().toString().trim());
             signupRequest.setLastname(txtLastName.getText().toString().trim());
-            signupRequest.setStateId("1");
-            signupRequest.setCityId("1");
+            signupRequest.setStateId(STATE_ID);
+            signupRequest.setCityId(CITY_ID);
             signupRequest.setAddress(txtAddress.getText().toString().trim());
-            signupRequest.setUserType(TYPE);
+            signupRequest.setUserType("3");
             signupRequest.setGender(SEX);
             signupRequest.setPhone(txtPhoneNumber.getText().toString().trim());
             signupRequest.setEmailId(txtEmail.getText().toString().trim());
@@ -325,10 +340,10 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             public void onResponse(Call<SignupRespose> call, Response<SignupRespose> response) {
                 SignupRespose getStateResponse = response.body();
                 if (getStateResponse.getFlag().equals("true")) {
-                        rlLoading.setVisibility(View.GONE);
+                    rlLoading.setVisibility(View.GONE);
 
                     getActivity().finish();
-                    startActivity(new Intent(getActivity(),ActHomeUser.class));
+                    startActivity(new Intent(getActivity(), ActHomeUser.class));
 
                 } else if (getStateResponse.getFlag().equals("false")) {
                     rlLoading.setVisibility(View.GONE);
@@ -359,9 +374,9 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         } else if (v == lblLogin) {
             getActivity().getSupportFragmentManager().popBackStack();
         } else if (v == txtCity) {
-            openCity();
+            openCityDialog();
         } else if (v == txtState) {
-            openState();
+            openStateDilaog();
         }
     }
 

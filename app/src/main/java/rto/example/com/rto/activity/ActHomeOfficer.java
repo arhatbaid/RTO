@@ -1,6 +1,5 @@
 package rto.example.com.rto.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +7,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import com.pixplicity.easyprefs.library.Prefs;
 
 import net.simonvt.menudrawer.MenuDrawer;
 
@@ -19,7 +16,7 @@ import rto.example.com.rto.fragment.FragHomeUser;
 import rto.example.com.rto.fragment.FragRegisterVehicle;
 import rto.example.com.rto.fragment.FragVehicleList;
 
-public class ActHomeUser extends AppCompatActivity implements
+public class ActHomeOfficer extends AppCompatActivity implements
         AdapterView.OnItemClickListener,
 View.OnClickListener{
 
@@ -90,11 +87,6 @@ View.OnClickListener{
                         R.anim.slide_in_right, R.anim.slide_out_right);
                 ft.replace(R.id.fragContainer, fragHomeUser1, FragHomeUser.class.getName());
                 ft.commit();
-                break;
-            case 3:
-                Prefs.clear();
-                startActivity(new Intent(this, ActHomeUser.class));
-                finish();
                 break;
         }
     }

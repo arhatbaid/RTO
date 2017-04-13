@@ -12,7 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.pixplicity.easyprefs.library.Prefs;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,8 +26,7 @@ import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.activity.ActLoginSignUp;
 import rto.example.com.rto.frameworks.signin.SigninRequest;
 import rto.example.com.rto.frameworks.signin.SigninResponse;
-import rto.example.com.rto.frameworks.signup.SignupRequest;
-import rto.example.com.rto.frameworks.signup.SignupRespose;
+import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
 
@@ -37,6 +40,7 @@ public class FragLogin extends Fragment implements View.OnClickListener {
     private RadioButton rbOfficer;
     private Button btnLogin;
     private TextView lblSignUp;
+    private RelativeLayout rlLoading;
 
     @Override
     public void onAttach(Activity activity) {
@@ -64,6 +68,7 @@ public class FragLogin extends Fragment implements View.OnClickListener {
         rbOfficer = (RadioButton) view.findViewById(R.id.rbOfficer);
         btnLogin = (Button) view.findViewById(R.id.btnLogin);
         lblSignUp = (TextView) view.findViewById(R.id.lblSignUp);
+        rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
 
         rbUser.setOnClickListener(this);
         rbOfficer.setOnClickListener(this);
@@ -72,29 +77,40 @@ public class FragLogin extends Fragment implements View.OnClickListener {
     }
 
 
-//    private void callSignIn(SigninRequest signinRequest) {
-//       // rlLoading.setVisibility(View.VISIBLE);
-//        WebAPIClient.getInstance(getActivity()).login_user(signinRequest, new Callback<SigninResponse>() {
-//            @Override
-//            public void onResponse(Call<SigninResponse> call, Response<SigninResponse> response) {
-//                SigninResponse getStateResponse = response.body();
-//                if (getStateResponse.getFlag().equals("true")) {
-//                   // rlLoading.setVisibility(View.GONE);
-//
-//                    getActivity().finish();
-//                    startActivity(new Intent(getActivity(),ActHomeUser.class));
-//
-//                } else if (getStateResponse.getFlag().equals("false")) {
-//                    rlLoading.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<SigninResponse> call, Throwable t) {
-//                rlLoading.setVisibility(View.GONE);
-//            }
-//        });
-//    }
+    private void callSignIn() {
+        rlLoading.setVisibility(View.VISIBLE);
+        SigninRequest signinRequest = new SigninRequest();
+        signinRequest.setEmailId(txtEmail.getText().toString().trim());
+        signinRequest.setPassword(txtPassword.getText().toString().trim());
+        signinRequest.setUserType(rbUser.isChecked() ? "3" : "2");
+        WebAPIClient.getInstance(getActivity()).login_user(signinRequest, new Callback<SigninResponse>() {
+            @Override
+            public void onResponse(Call<SigninResponse> call, Response<SigninResponse> response) {
+                SigninResponse signinResponse = response.body();
+                rlLoading.setVisibility(View.GONE);
+                if (signinResponse.getFlag().equals("true")) {
+                    Prefs.putString(PrefsKeys.USERID, signinResponse.getData().getUserId());
+                    Prefs.putString(PrefsKeys.FIRSTNAME, signinResponse.getData().getFirstname());
+                    Prefs.putString(PrefsKeys.LASTNAME, signinResponse.getData().getLastname());
+                    Prefs.putString(PrefsKeys.Birthdate, signinResponse.getData().getBirthdate());
+                    Prefs.putString(PrefsKeys.GENDER, signinResponse.getData().getGender());
+                    Prefs.putString(PrefsKeys.ADDRESS, signinResponse.getData().getAddress());
+                    Prefs.putString(PrefsKeys.City, signinResponse.getData().getCityId());
+                    Prefs.putString(PrefsKeys.State, signinResponse.getData().getStateId());
+                    Prefs.putString(PrefsKeys.MOBILE, signinResponse.getData().getPhone());
+                    Prefs.putString(PrefsKeys.USER_TYPE, signinResponse.getData().getUserType());
+                    Prefs.putString(PrefsKeys.status, signinResponse.getData().getStatus());
+                    startActivity(new Intent(getActivity(), ActHomeUser.class));
+                    getActivity().finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SigninResponse> call, Throwable t) {
+                rlLoading.setVisibility(View.GONE);
+            }
+        });
+    }
 
     @Override
     public void onClick(View v) {
@@ -102,9 +118,12 @@ public class FragLogin extends Fragment implements View.OnClickListener {
 
         } else if (v == rbOfficer) {
 
-        }  else if (v == btnLogin) {
-            startActivity(new Intent(getActivity(), ActHomeUser.class));
+        } else if (v == btnLogin) {
+            if (isValid()) {
+                callSignIn();
+            }
         } else if (v == lblSignUp) {
+            Prefs.clear();//Clear all previous data.
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             FragSignUp fragSignUp = new FragSignUp();
             ft.addToBackStack(FragSignUp.class.getName());
@@ -113,5 +132,18 @@ public class FragLogin extends Fragment implements View.OnClickListener {
             ft.replace(R.id.fragContainer, fragSignUp, FragSignUp.class.getName());
             ft.commit();
         }
+    }
+
+    private boolean isValid() {
+        if (txtEmail.getText().toString().trim().isEmpty()) {
+            Toast.makeText(root, "Please enter valid email address", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (txtPassword.getText().toString().trim().isEmpty()) {
+            Toast.makeText(root, "Please enter valid password", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 }
