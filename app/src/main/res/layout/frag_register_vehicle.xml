@@ -48,7 +48,7 @@
                         android:editable="true"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:hint="@string/state"
+                        android:hint="@string/state_code"
                         android:inputType="text|textNoSuggestions" />
 
                 </android.support.design.widget.TextInputLayout>
@@ -64,23 +64,7 @@
                         android:editable="true"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:hint="@string/city"
-                        android:inputType="text|textNoSuggestions" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/txtVehicleType"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:editable="true"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:hint="@string/vehicle_type"
+                        android:hint="@string/city_code"
                         android:inputType="text|textNoSuggestions" />
 
                 </android.support.design.widget.TextInputLayout>
@@ -122,6 +106,22 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/vehicle_number"
                         android:inputType="number|textNoSuggestions" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/txtVehicleType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:editable="true"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/vehicle_type"
+                        android:inputType="text|textNoSuggestions" />
+
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout

@@ -298,7 +298,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             txtVehicleBuyDate.setError(null);
         }
 
-        if (txtPUCNumber.getText().toString().trim().isEmpty()) {
+       /* if (txtPUCNumber.getText().toString().trim().isEmpty()) {
             txtPUCNumber.setError("*");
             return false;
         } else {
@@ -310,7 +310,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             return false;
         } else {
             txtPUCPurchaseDate.setError(null);
-        }
+        }*/
         return true;
     }
 
@@ -380,7 +380,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
         if (listState.size() > 0) {
             for (int i = 0, count = listState.size(); i < count; i++) {
                 if (STATE_ID.equalsIgnoreCase(listState.get(i).getStateId())) {
-                    txtState.setText(listState.get(i).getStateName());
+                    txtState.setText(listState.get(i).getStateCode());
                     break;
                 }
             }
@@ -412,7 +412,6 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             }
         });
 
-
         builderSingle.setSingleChoiceItems(arrayAdapter, selectedOption, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -420,13 +419,13 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
                 if (type.equalsIgnoreCase(Constants.STATE)) {
                     STATE_ID = listState.get(which).getStateId();
 
-                    txtState.setText(strName);
+                    txtState.setText(listState.get(which).getStateCode());
                     txtCity.setText("");
                     callCity(false);
                     txtState.setError(null);
                     txtCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtCity.setText(strName);
+                    txtCity.setText(listCity.get(which).getCityCode());
                     txtCity.setError(null);
                     CITY_ID = listCity.get(which).getCityId();
                 }
@@ -450,7 +449,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
                 if (getCityResponse.getFlag().equals("true")) {
                     listCity.addAll(getCityResponse.getData());
                     if (predefined) {
-
+                       getCityId();
                     } else {
 
                     }
@@ -472,7 +471,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
         if (listCity.size() > 0) {
             for (int i = 0, count = listCity.size(); i < count; i++) {
                 if (CITY_ID.equalsIgnoreCase(listCity.get(i).getCityId())) {
-                    txtState.setText(listCity.get(i).getCityName());
+                    txtCity.setText(listCity.get(i).getCityCode());
                     break;
                 }
             }

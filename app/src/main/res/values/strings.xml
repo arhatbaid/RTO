@@ -25,9 +25,7 @@
 
     <!--Menu Drawer List-->
     <string-array name="menu_item">
-        <item>Existing Vehicle List</item>
-        <item>Register New Vehicle</item>
-        <item>Add Number Plate</item>
+        <item>Home</item>
         <item>Logout</item>
     </string-array>
 

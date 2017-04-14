@@ -30,7 +30,7 @@ public class AdapterDispatchedTawVehicles extends ArrayAdapter<DispatchedTawVehi
         ViewHolder v = null;
         if (convertView == null) {
             v = new ViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.cell_menu_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.cell_vehicle_dispatch, parent, false);
             v.lblTime = (TextView) convertView.findViewById(R.id.lblTime);
             v.lblVehicleNumberPlate = (TextView) convertView.findViewById(R.id.lblVehicleNumberPlate);
             convertView.setTag(v);
