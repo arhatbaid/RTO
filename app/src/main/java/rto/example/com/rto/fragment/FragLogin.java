@@ -22,6 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
+import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.activity.ActLoginSignUp;
 import rto.example.com.rto.frameworks.signin.SigninRequest;
@@ -100,9 +101,8 @@ public class FragLogin extends Fragment implements View.OnClickListener {
                     Prefs.putString(PrefsKeys.MOBILE, signinResponse.getData().getPhone());
                     Prefs.putString(PrefsKeys.USER_TYPE, signinResponse.getData().getUserType());
                     Prefs.putString(PrefsKeys.status, signinResponse.getData().getStatus());
-                    startActivity(new Intent(getActivity(), ActHomeUser.class));
+                    startActivity(new Intent(getActivity(), rbOfficer.isChecked() ? ActHomeOfficer.class : ActHomeUser.class));
                     getActivity().finish();
-                    startActivity(new Intent(getActivity(),ActHomeUser.class));
                 }
             }
 

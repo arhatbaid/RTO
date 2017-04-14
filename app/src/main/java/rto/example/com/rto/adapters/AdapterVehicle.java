@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +20,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
-import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.activity.ActHomeUser;
-import rto.example.com.rto.fragment.FragRegisterVehicle;
-import rto.example.com.rto.fragment.FragVehicleList;
+import rto.example.com.rto.fragment.FragEditRegisterVehicle;
 import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleRequest;
 import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleResponse;
-import rto.example.com.rto.frameworks.editvehicle.EditVehicleRequest;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleData;
-import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
-import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
 import rto.example.com.rto.helper.AppHelper;
 import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
@@ -43,10 +37,12 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
 
     private ArrayList<GetVehicleData> arrVehicle;
     private Context context;
+    private DeleteVehicleListener deleteVehicleListener = null;
 
-    public AdapterVehicle(ArrayList<GetVehicleData> arrVehicle, Context context) {
+    public AdapterVehicle(ArrayList<GetVehicleData> arrVehicle, Context context, DeleteVehicleListener deleteVehicleListener) {
         this.arrVehicle = arrVehicle;
         this.context = context;
+        this.deleteVehicleListener = deleteVehicleListener;
     }
 
     @Override
@@ -68,7 +64,7 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               showDeleteConfirmDialog(position);
+                showDeleteConfirmDialog(position);
             }
         });
 
@@ -96,7 +92,6 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
 
         public ViewHolder(View itemView) {
             super(itemView);
-
             lblVehicleName = (TextView) itemView.findViewById(R.id.lblVehicleName);
             lblVehicleNumberPlate = (TextView) itemView.findViewById(R.id.lblVehicleNumberPlate);
             imgEdit = (ImageView) itemView.findViewById(R.id.imgEdit);
@@ -104,7 +99,7 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
         }
     }
 
-    private void showDeleteConfirmDialog(final int pos){
+    private void showDeleteConfirmDialog(final int pos) {
         new AlertDialog.Builder(context)
                 .setTitle("Delete entry")
                 .setMessage("Are you sure you want to delete this entry?")
@@ -112,8 +107,8 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
                         dialog.dismiss();
-                      //  arrVehicle.remove(pos);
-                        callDeleteVehicle(arrVehicle.get(pos).getVehicleId());
+                        //  arrVehicle.remove(pos);
+                        callDeleteVehicle(arrVehicle.get(pos).getVehicleId(), pos);
                         //notifyDataSetChanged();
                     }
                 })
@@ -127,12 +122,12 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
                 .show();
     }
 
-    private void callDeleteVehicle(String id) {
+    private void callDeleteVehicle(String id, final int pos) {
         //rlLoading.setVisibility(View.VISIBLE);
         DeleteVehicleRequest deleteVehicleRequest = new DeleteVehicleRequest();
         deleteVehicleRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
         deleteVehicleRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
-        deleteVehicleRequest.setVehicleId("3");
+        deleteVehicleRequest.setVehicleId(id);
         WebAPIClient.getInstance(context).delete_vehicle(deleteVehicleRequest, new Callback<DeleteVehicleResponse>() {
             @Override
             public void onResponse(Call<DeleteVehicleResponse> call, Response<DeleteVehicleResponse> response) {
@@ -140,7 +135,8 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
 
                 DeleteVehicleResponse deleteVehicleResponse = response.body();
                 if (deleteVehicleResponse.getFlag().equals("true")) {
-                    Log.d("delete", "vehicle successfully deleted!");
+                    deleteVehicleListener.viewDeleted(pos);
+                    Toast.makeText(context, "Vehicle Deleted", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -154,13 +150,18 @@ public class AdapterVehicle extends RecyclerView.Adapter<AdapterVehicle.ViewHold
 
     private void gotoFragDetails(GetVehicleData getVehicleData) {
         FragmentTransaction ft = ((ActHomeUser) context).getSupportFragmentManager().beginTransaction();
-        FragRegisterVehicle fragRegisterVehicle = new FragRegisterVehicle();
-        fragRegisterVehicle.setGetVehicleData(getVehicleData);
-        ft.addToBackStack(FragRegisterVehicle.class.getName());
+        FragEditRegisterVehicle fragEditRegisterVehicle = new FragEditRegisterVehicle();
+        fragEditRegisterVehicle.setGetVehicleData(getVehicleData);
+        fragEditRegisterVehicle.setIsRegister(false); //Edit screen
+        ft.addToBackStack(FragEditRegisterVehicle.class.getName());
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
-        ft.replace(R.id.fragContainer, fragRegisterVehicle, FragRegisterVehicle.class.getName());
+        ft.replace(R.id.fragContainer, fragEditRegisterVehicle, FragEditRegisterVehicle.class.getName());
         ft.commit();
+    }
+
+    public interface DeleteVehicleListener {
+        public void viewDeleted(int position);
     }
 }
 

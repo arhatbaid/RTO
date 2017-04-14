@@ -342,8 +342,8 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
                 if (getStateResponse.getFlag().equals("true")) {
                     rlLoading.setVisibility(View.GONE);
 
-                    getActivity().finish();
                     startActivity(new Intent(getActivity(), ActHomeUser.class));
+                    getActivity().finish();
 
                 } else if (getStateResponse.getFlag().equals("false")) {
                     rlLoading.setVisibility(View.GONE);

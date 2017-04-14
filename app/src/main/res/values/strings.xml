@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">RTO</string>
+    <string name="error">Something went wrong!!! Please try again.</string>
 
 
     <!--Login Sign Up-->
@@ -30,6 +31,13 @@
         <item>Logout</item>
     </string-array>
 
+    <string-array name="menu_item_officer">
+        <item>Add Taw Vehicle</item>
+        <item>Dispatched Taw Vehicle</item>
+        <item>Taw Vehicle List</item>
+        <item>Logout</item>
+    </string-array>
+
 
     <!--Frag Register Vehicle-->
     <string name="register_vehicle">Register Vehicle</string>
@@ -37,6 +45,7 @@
     <string name="vehicle_type">Vehicle Type</string>
     <string name="state_code">State Code</string>
     <string name="series_number">Series Number</string>
+    <string name="city_code">City Code</string>
     <string name="vehicle_number">Vehicle Number</string>
     <string name="vehicle_buying_date">Vehicle Buying Date</string>
     <string name="puc_number">PUC Number</string>

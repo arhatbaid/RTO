@@ -17,9 +17,8 @@ import net.simonvt.menudrawer.MenuDrawer;
 
 import rto.example.com.rto.R;
 import rto.example.com.rto.adapters.AdapterMenu;
-import rto.example.com.rto.fragment.FragHomeUser;
-import rto.example.com.rto.fragment.FragRegisterVehicle;
-import rto.example.com.rto.fragment.FragVehicleList;
+import rto.example.com.rto.fragment.FragAddTawVehicle;
+import rto.example.com.rto.fragment.FragGetDispatchedTawVehicle;
 
 public class ActHomeOfficer extends AppCompatActivity implements
         AdapterView.OnItemClickListener,
@@ -40,11 +39,11 @@ public class ActHomeOfficer extends AppCompatActivity implements
         mDrawer.setContentView(R.layout.act_home_user);
         mDrawer.setMenuView(R.layout.menu_bar);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragContainer, new FragHomeUser(), FragHomeUser.class.getName()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragContainer, new FragAddTawVehicle(), FragAddTawVehicle.class.getName()).commit();
 
         lstItem = (ListView) findViewById(R.id.lstItem);
         imgMenu = (ImageView) findViewById(R.id.imgMenu);
-        menuItem = getResources().getStringArray(R.array.menu_item);
+        menuItem = getResources().getStringArray(R.array.menu_item_officer);
 
         adapter = new AdapterMenu(getApplicationContext(), 0, menuItem);
         lstItem.setAdapter(adapter);
@@ -59,38 +58,38 @@ public class ActHomeOfficer extends AppCompatActivity implements
         switch (position) {
             case 0:
                 mDrawer.closeMenu();
-                FragVehicleList fragVehicleList = (FragVehicleList) getSupportFragmentManager().findFragmentByTag(FragVehicleList.class.getName());
+                FragAddTawVehicle fragVehicleList = (FragAddTawVehicle) getSupportFragmentManager().findFragmentByTag(FragAddTawVehicle.class.getName());
                 if (fragVehicleList != null && fragVehicleList.isVisible())
                     return;
-                FragVehicleList fragVehicleList1 = new FragVehicleList();
-                ft.addToBackStack(FragVehicleList.class.getName());
+                FragAddTawVehicle fragVehicleList1 = new FragAddTawVehicle();
+                ft.addToBackStack(FragAddTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragVehicleList1, FragVehicleList.class.getName());
+                ft.replace(R.id.fragContainer, fragVehicleList1, FragAddTawVehicle.class.getName());
                 ft.commit();
                 break;
             case 1:
                 mDrawer.closeMenu();
-                FragRegisterVehicle fragRegisterVehicle = (FragRegisterVehicle) getSupportFragmentManager().findFragmentByTag(FragRegisterVehicle.class.getName());
-                if (fragRegisterVehicle != null && fragRegisterVehicle.isVisible())
+                FragGetDispatchedTawVehicle fragEditRegisterVehicle = (FragGetDispatchedTawVehicle) getSupportFragmentManager().findFragmentByTag(FragGetDispatchedTawVehicle.class.getName());
+                if (fragEditRegisterVehicle != null && fragEditRegisterVehicle.isVisible())
                     return;
-                FragRegisterVehicle fragRegisterVehicle1 = new FragRegisterVehicle();
-                ft.addToBackStack(FragRegisterVehicle.class.getName());
+                FragGetDispatchedTawVehicle fragEditRegisterVehicle1 = new FragGetDispatchedTawVehicle();
+                ft.addToBackStack(FragGetDispatchedTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragRegisterVehicle1, FragRegisterVehicle.class.getName());
+                ft.replace(R.id.fragContainer, fragEditRegisterVehicle1, FragGetDispatchedTawVehicle.class.getName());
                 ft.commit();
                 break;
             case 2:
                 mDrawer.closeMenu();
-                FragHomeUser fragHomeUser = (FragHomeUser) getSupportFragmentManager().findFragmentByTag(FragHomeUser.class.getName());
-                if (fragHomeUser != null && fragHomeUser.isVisible())
+                FragAddTawVehicle fragAddTawVehicle = (FragAddTawVehicle) getSupportFragmentManager().findFragmentByTag(FragAddTawVehicle.class.getName());
+                if (fragAddTawVehicle != null && fragAddTawVehicle.isVisible())
                     return;
-                FragHomeUser fragHomeUser1 = new FragHomeUser();
-                ft.addToBackStack(FragHomeUser.class.getName());
+                FragAddTawVehicle fragAddTawVehicle1 = new FragAddTawVehicle();
+                ft.addToBackStack(FragAddTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragHomeUser1, FragHomeUser.class.getName());
+                ft.replace(R.id.fragContainer, fragAddTawVehicle1, FragAddTawVehicle.class.getName());
                 ft.commit();
                 break;
             case 3:

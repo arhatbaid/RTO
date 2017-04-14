@@ -204,10 +204,7 @@ public class AppHelper {
     }
 
     public static boolean isValidString(String txt) {
-        if (txt != null && !txt.isEmpty())
-            return true;
-        else
-            return false;
+        return (txt != null && !txt.isEmpty());
     }
 
 

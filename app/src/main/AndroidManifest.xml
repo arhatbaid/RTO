@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.ActSplash"
+            android:name=".activity.ActLoginSignUp"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +26,10 @@
             android:name=".activity.ActHomeUser"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".activity.ActLoginSignUp"></activity>
+        <activity
+            android:name=".activity.ActHomeOfficer"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
