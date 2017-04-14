@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.pixplicity.easyprefs.library.Prefs;
+
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -22,6 +24,7 @@ import rto.example.com.rto.adapters.AdapterVehicle;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleData;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
+import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
 public class FragVehicleList extends Fragment implements
@@ -62,7 +65,7 @@ public class FragVehicleList extends Fragment implements
     private void callGetVehicleList() {
         rlLoading.setVisibility(View.VISIBLE);
         GetVehicleRequest getVehicleRequest = new GetVehicleRequest();
-        getVehicleRequest.setUserId("2");
+        getVehicleRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
         getVehicleRequest.setUserType("3");
         WebAPIClient.getInstance(getActivity()).get_user_vehicle(getVehicleRequest, new Callback<GetVehicleResponse>() {
             @Override

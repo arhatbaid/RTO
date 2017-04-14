@@ -42,7 +42,7 @@ public interface WebAPIInterface {
                                      @Field("api_secret") String api_secret,
                                      @Field("api_request") String api_request,
                                      @Field("data") String data);
-
+    @FormUrlEncoded
     @POST(Endpoint.POST_URL)
     Call<GetCityResponse> get_city(@Field("api_id") String api_id,
                                    @Field("api_secret") String api_secret,

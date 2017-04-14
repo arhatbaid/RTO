@@ -1,6 +1,5 @@
 package rto.example.com.rto.fragment;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -62,7 +61,6 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     private TextView lblLogin;
     private RelativeLayout rlLoading;
 
-    private ProgressDialog progressDialog = null;
     private String STATE_ID = "", CITY_ID = "";
     private ArrayList<GetStateData> listState = new ArrayList<>();
     private ArrayList<GetCityData> listCity = new ArrayList<>();
@@ -110,7 +108,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     private void callState() {
         rlLoading.setVisibility(View.VISIBLE);
         GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId("2");
+        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
         getStateRequest.setUserType("3");
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
@@ -123,16 +121,6 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
                         rlLoading.setVisibility(View.GONE);
                     else
                         getStateId();
-                   /* ArrayList<String> tmpData = new ArrayList<String>();
-                    if (listState.size() > 0) {
-                        for (int i = 0, count = listState.size(); i < count; i++) {
-                            tmpData.add(listState.get(i).getName());
-                        }
-
-                        rlLoading.setVisibility(View.GONE);
-//                        placeDialogue("state", tmpData);
-                    }*/
-
                 } else if (getStateResponse.getFlag().equals("false")) {
                     rlLoading.setVisibility(View.GONE);
                 }
@@ -149,7 +137,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     private void callCity() {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId("2");
+        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
         getCityRequest.setUserType("3");
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
@@ -197,14 +185,14 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         int selectedOption = -1;
         ArrayList<String> tmpData = new ArrayList<>();
         if (listState.size() > 0) {
-            if (Prefs.getString(PrefsKeys.State, "").isEmpty()){
+            if (Prefs.getString(PrefsKeys.State, "").isEmpty()) {
                 for (int i = 0, count = listState.size(); i < count; i++) {
                     tmpData.add(listState.get(i).getStateName());
                 }
             } else {
                 for (int i = 0, count = listState.size(); i < count; i++) {
                     tmpData.add(listState.get(i).getStateName());
-                    if(listState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.State, ""))){
+                    if (listState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.State, ""))) {
                         selectedOption = i;
                     }
                 }
@@ -217,14 +205,14 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         int selectedOption = -1;
         ArrayList<String> tmpData = new ArrayList<>();
         if (listCity.size() > 0) {
-            if (Prefs.getString(PrefsKeys.City, "").isEmpty()){
+            if (Prefs.getString(PrefsKeys.City, "").isEmpty()) {
                 for (int i = 0, count = listCity.size(); i < count; i++) {
                     tmpData.add(listCity.get(i).getCityName());
                 }
             } else {
                 for (int i = 0, count = listCity.size(); i < count; i++) {
                     tmpData.add(listCity.get(i).getCityName());
-                    if(listCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.City, ""))){
+                    if (listCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.City, ""))) {
                         selectedOption = i;
                     }
                 }
@@ -234,7 +222,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     }
 
     private void placeDialogue(final String type, ArrayList<String> tmpData, int selectedOption) {
-    //Todo show the last selected option
+        //Todo show the last selected option
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
 
         builderSingle.setTitle("Select " + type + " :-");
@@ -248,7 +236,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         });
 
 
-        builderSingle.setSingleChoiceItems(arrayAdapter, selectedOption,new DialogInterface.OnClickListener() {
+        builderSingle.setSingleChoiceItems(arrayAdapter, selectedOption, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String strName = arrayAdapter.getItem(which);
