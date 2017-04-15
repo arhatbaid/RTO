@@ -114,7 +114,7 @@ public class FragMap extends Fragment implements
 
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(point)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_delete))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
                 .title(msg).snippet(eventName));
 
     }
@@ -132,7 +132,7 @@ public class FragMap extends Fragment implements
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(currLat, currLng))
-                .zoom(17)
+                .zoom(15)
                 .build();
 
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -240,6 +240,7 @@ public class FragMap extends Fragment implements
             if (mLastLocation != null) {
                 currLat = mLastLocation.getLatitude();
                 currLng = mLastLocation.getLongitude();
+
 
 
             }

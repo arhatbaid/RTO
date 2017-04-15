@@ -19,8 +19,6 @@ import rto.example.com.rto.R;
 import rto.example.com.rto.adapters.AdapterMenu;
 import rto.example.com.rto.fragment.FragAddTawVehicle;
 import rto.example.com.rto.fragment.FragGetDispatchedTawVehicle;
-import rto.example.com.rto.fragment.FragHomeUser;
-import rto.example.com.rto.fragment.FragRegisterVehicle;
 import rto.example.com.rto.fragment.FragSearchTawVehicle;
 import rto.example.com.rto.fragment.FragVehicleList;
 
@@ -76,8 +74,6 @@ public class ActHomeOfficer extends AppCompatActivity implements
                 mDrawer.closeMenu();
                 FragGetDispatchedTawVehicle fragEditRegisterVehicle = (FragGetDispatchedTawVehicle) getSupportFragmentManager().findFragmentByTag(FragGetDispatchedTawVehicle.class.getName());
                 if (fragEditRegisterVehicle != null && fragEditRegisterVehicle.isVisible())
-                FragSearchTawVehicle fragSearchTawVehicle = (FragSearchTawVehicle) getSupportFragmentManager().findFragmentByTag(FragSearchTawVehicle.class.getName());
-                if (fragSearchTawVehicle != null && fragSearchTawVehicle.isVisible())
                     return;
                 FragGetDispatchedTawVehicle fragEditRegisterVehicle1 = new FragGetDispatchedTawVehicle();
                 ft.addToBackStack(FragGetDispatchedTawVehicle.class.getName());

@@ -17,8 +17,6 @@ import net.simonvt.menudrawer.MenuDrawer;
 
 import rto.example.com.rto.R;
 import rto.example.com.rto.adapters.AdapterMenu;
-import rto.example.com.rto.fragment.FragHomeUser;
-import rto.example.com.rto.fragment.FragRegisterVehicle;
 import rto.example.com.rto.fragment.FragSearchTawVehicle;
 import rto.example.com.rto.fragment.FragAddTawVehicle;
 import rto.example.com.rto.fragment.FragEditRegisterVehicle;
@@ -76,8 +74,6 @@ View.OnClickListener{
                 mDrawer.closeMenu();
                 FragEditRegisterVehicle fragEditRegisterVehicle = (FragEditRegisterVehicle) getSupportFragmentManager().findFragmentByTag(FragEditRegisterVehicle.class.getName());
                 if (fragEditRegisterVehicle != null && fragEditRegisterVehicle.isVisible())
-                FragSearchTawVehicle fragSearchTawVehicle = (FragSearchTawVehicle) getSupportFragmentManager().findFragmentByTag(FragSearchTawVehicle.class.getName());
-                if (fragSearchTawVehicle != null && fragSearchTawVehicle.isVisible())
                     return;
                 FragEditRegisterVehicle fragEditRegisterVehicle1 = new FragEditRegisterVehicle();
                 ft.addToBackStack(FragEditRegisterVehicle.class.getName());

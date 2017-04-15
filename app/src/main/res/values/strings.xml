@@ -26,6 +26,7 @@
     <!--Menu Drawer List-->
     <string-array name="menu_item">
         <item>Home</item>
+        <item>Search Vehicle</item>
         <item>Logout</item>
     </string-array>
 

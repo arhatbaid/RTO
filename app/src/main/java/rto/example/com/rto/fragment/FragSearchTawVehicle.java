@@ -89,8 +89,8 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     private void callState() {
         rlLoading.setVisibility(View.VISIBLE);
         GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID,""));
-        getStateRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE,""));
+        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
+        getStateRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
             public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
@@ -119,8 +119,8 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     private void callCity() {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID,""));
-        getCityRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE,""));
+        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
+        getCityRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override
@@ -252,7 +252,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         searchTawVehicleRequest.setVehicleStateId(STATE_ID);
         //searchTawVehicleRequest.setVehicleNo(txtVehicleNumber.getText().toString()+"");
         searchTawVehicleRequest.setVehicleNo("MJ");
-       // searchTawVehicleRequest.setVehicleSeriesNo(txtSeriesNumber.getText().toString()+"");
+        // searchTawVehicleRequest.setVehicleSeriesNo(txtSeriesNumber.getText().toString()+"");
         searchTawVehicleRequest.setVehicleSeriesNo("8877");
         WebAPIClient.getInstance(getActivity()).search_taw_vehicle(searchTawVehicleRequest, new Callback<SearchTawVehicleResponse>() {
             @Override
@@ -314,14 +314,45 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         ft.commit();
     }
 
+    private void validateForm() {
+        boolean ALL_IS_WELL = true;
+
+        String vehicle_num = txtVehicleNumber.getText().toString().trim();
+        String seriesNumber = txtSeriesNumber.getText().toString().trim();
+
+        if (STATE_ID.equals("")) {
+            txtState.setError("*");
+            ALL_IS_WELL = false;
+        } else txtState.setError(null);
+
+        if (CITY_ID.equals("")) {
+            txtCity.setError("*");
+            ALL_IS_WELL = false;
+        } else txtCity.setError(null);
+
+        if (vehicle_num.equals("")) {
+            txtVehicleNumber.setError("*");
+            ALL_IS_WELL = false;
+        } else txtVehicleNumber.setError(null);
+
+        if (seriesNumber.equals("")) {
+            txtSeriesNumber.setError("*");
+            ALL_IS_WELL = false;
+        } else txtSeriesNumber.setError(null);
+
+        if (ALL_IS_WELL)
+            callSearchTawVehicle();
+
+    }
+
     @Override
     public void onClick(View v) {
         if (v == txtCity) {
             openCityDialog();
         } else if (v == txtState) {
             openStateDilaog();
-        }else if (v==btnSearch){
-            callSearchTawVehicle();
+        } else if (v == btnSearch) {
+            validateForm();
         }
     }
 }

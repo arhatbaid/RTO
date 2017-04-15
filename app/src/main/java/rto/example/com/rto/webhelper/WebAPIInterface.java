@@ -46,7 +46,6 @@ public interface WebAPIInterface {
                                      @Field("data") String data);
 
     @FormUrlEncoded
-    @FormUrlEncoded
     @POST(Endpoint.POST_URL)
     Call<GetCityResponse> get_city(@Field("api_id") String api_id,
                                    @Field("api_secret") String api_secret,
