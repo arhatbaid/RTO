@@ -42,4 +42,6 @@
     <string name="puc_number">PUC Number</string>
     <string name="puc_purchase_date">PUC Purchase Date</string>
     <string name="save">SAVE</string>
+    <string name="alert">Alert</string>
+    <string name="no_internet">No internet connection</string>
 </resources>

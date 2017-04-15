@@ -7,6 +7,8 @@ import android.support.multidex.MultiDex;
 
 import com.pixplicity.easyprefs.library.Prefs;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by ridz1 on 13/04/2017.
  */
@@ -14,6 +16,13 @@ import com.pixplicity.easyprefs.library.Prefs;
 public class RTO extends Application {
 
     public Context context;
+    private static EventBus _bus;
+
+    public static EventBus getEventBus() {
+        if (null == _bus)
+            _bus = new EventBus();
+        return _bus;
+    }
 
     @Override
     public void onCreate() {

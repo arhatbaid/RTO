@@ -19,6 +19,7 @@ import rto.example.com.rto.R;
 import rto.example.com.rto.adapters.AdapterMenu;
 import rto.example.com.rto.fragment.FragHomeUser;
 import rto.example.com.rto.fragment.FragRegisterVehicle;
+import rto.example.com.rto.fragment.FragSearchTawVehicle;
 import rto.example.com.rto.fragment.FragVehicleList;
 
 public class ActHomeOfficer extends AppCompatActivity implements
@@ -71,14 +72,14 @@ public class ActHomeOfficer extends AppCompatActivity implements
                 break;
             case 1:
                 mDrawer.closeMenu();
-                FragRegisterVehicle fragRegisterVehicle = (FragRegisterVehicle) getSupportFragmentManager().findFragmentByTag(FragRegisterVehicle.class.getName());
-                if (fragRegisterVehicle != null && fragRegisterVehicle.isVisible())
+                FragSearchTawVehicle fragSearchTawVehicle = (FragSearchTawVehicle) getSupportFragmentManager().findFragmentByTag(FragSearchTawVehicle.class.getName());
+                if (fragSearchTawVehicle != null && fragSearchTawVehicle.isVisible())
                     return;
-                FragRegisterVehicle fragRegisterVehicle1 = new FragRegisterVehicle();
-                ft.addToBackStack(FragRegisterVehicle.class.getName());
+                FragSearchTawVehicle fragSearchTawVehicle1 = new FragSearchTawVehicle();
+                ft.addToBackStack(FragSearchTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragRegisterVehicle1, FragRegisterVehicle.class.getName());
+                ft.replace(R.id.fragContainer, fragSearchTawVehicle1, FragSearchTawVehicle.class.getName());
                 ft.commit();
                 break;
             case 2:

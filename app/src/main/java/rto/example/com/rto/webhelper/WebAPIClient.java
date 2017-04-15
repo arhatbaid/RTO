@@ -26,8 +26,12 @@ import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleRequest;
 import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleResponse;
 import rto.example.com.rto.frameworks.editvehicle.EditVehicleRequest;
 import rto.example.com.rto.frameworks.editvehicle.EditVehicleResponse;
+import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationRequest;
+import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationResponse;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
+import rto.example.com.rto.frameworks.searchtawvehicle.SearchTawVehicleRequest;
+import rto.example.com.rto.frameworks.searchtawvehicle.SearchTawVehicleResponse;
 import rto.example.com.rto.frameworks.signin.SigninRequest;
 import rto.example.com.rto.frameworks.signin.SigninResponse;
 import rto.example.com.rto.frameworks.signup.SignupRequest;
@@ -148,6 +152,18 @@ public class WebAPIClient {
         String api_request = "register_user";
         String data = new Gson().toJson(Request);
         json().register_user(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void search_taw_vehicle(SearchTawVehicleRequest Request, Callback<SearchTawVehicleResponse> callback) {
+        String api_request = "search_taw_vehicle";
+        String data = new Gson().toJson(Request);
+        json().search_taw_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void search_nearest_police_station(GetNearPoliceStationRequest Request, Callback<GetNearPoliceStationResponse> callback) {
+        String api_request = "search_nearest_police_station";
+        String data = new Gson().toJson(Request);
+        json().search_nearest_police_station(api_id, api_secret, api_request, data).enqueue(callback);
     }
 //
 //

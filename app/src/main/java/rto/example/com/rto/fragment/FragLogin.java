@@ -125,8 +125,8 @@ public class FragLogin extends Fragment implements View.OnClickListener {
             }
         } else if (v == lblSignUp) {
             Prefs.clear();//Clear all previous data.
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             FragSignUp fragSignUp = new FragSignUp();
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             ft.addToBackStack(FragSignUp.class.getName());
             ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                     R.anim.slide_in_right, R.anim.slide_out_right);

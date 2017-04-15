@@ -1,6 +1,7 @@
 package rto.example.com.rto.helper;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -10,7 +11,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -209,6 +212,32 @@ public class AppHelper {
         else
             return false;
     }
+
+    public static AlertDialog showAlertDialog(Context context, String msg, String title) {
+        AlertDialog alert11 = null;
+        try {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+            builder1.setMessage(msg);
+            builder1.setTitle(title);
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            alert11 = builder1.create();
+            alert11.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("AlertException", e.getMessage());
+        }
+        return alert11;
+    }
+
 
 
 }
