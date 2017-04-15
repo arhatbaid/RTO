@@ -28,6 +28,8 @@ import rto.example.com.rto.frameworks.editvehicle.EditVehicleRequest;
 import rto.example.com.rto.frameworks.editvehicle.EditVehicleResponse;
 import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationRequest;
 import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationResponse;
+import rto.example.com.rto.frameworks.getdispatchedtawvehicles.GetDispatchedTawVehicleRequest;
+import rto.example.com.rto.frameworks.getdispatchedtawvehicles.GetDispatchedTawVehicleResponse;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
 import rto.example.com.rto.frameworks.searchtawvehicle.SearchTawVehicleRequest;
@@ -185,142 +187,10 @@ public class WebAPIClient {
         json().get_city(api_id, api_secret, api_request, data).enqueue(callback);
     }
 
-//    public void validate_otp(ValidateOtpRequest Request, Callback<ValidateOtpResponse> callback) {
-//        String api_request = "validate_otp";
-//        String data = new Gson().toJson(Request);
-//        json().validate_otp(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void resend_otp(ReSendOtpRequest Request, Callback<ResendOtpResponse> callback) {
-//        String api_request = "resend_otp";
-//        String data = new Gson().toJson(Request);
-//        json().resend_otp(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void register_for_push(RegisterForPushRequest Request, Callback<RegisterForPushResponse> callback) {
-//        String api_request = "register_for_push";
-//        String data = new Gson().toJson(Request);
-//        json().register_for_push(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void my_account_balance(GetAccountBalanceRequest Request, Callback<GetAccountBalanceResponse> callback) {
-//        String api_request = "get_account_points";
-//        String data = new Gson().toJson(Request);
-//        json().my_account_balance(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_offers(GetOfferesRequest Request, Callback<GetOfferesResponse> callback) {
-//        String api_request = "get_offers";
-//        String data = new Gson().toJson(Request);
-//        json().get_offers(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_hot_news(GetHotNewsRequest Request, Callback<GetHotNewsResponse> callback) {
-//        String api_request = "get_hot_news";
-//        String data = new Gson().toJson(Request);
-//        json().get_hot_news(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_configuration(GetConfigRequest Request, Callback<GetConfigResponse> callback) {
-//        String api_request = "get_configuration";
-//        String data = new Gson().toJson(Request);
-//        json().get_configuration(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_price_service(GetPriceServiceRequest Request, Callback<GetPriceServiceResponse> callback) {
-//        String api_request = "get_services_and_pricing";
-//        String data = new Gson().toJson(Request);
-//        json().get_price_servce(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_home_slider(SliderImgRequest Request, Callback<SliderImgResponse> callback) {
-//        String api_request = "get_home_slider";
-//        String data = new Gson().toJson(Request);
-//        json().get_home_slider(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void set_settings(SetSettingRequest Request, Callback<SetSettingResponse> callback) {
-//        String api_request = "set_settings";
-//        String data = new Gson().toJson(Request);
-//        json().set_settings(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_settings(GetSettingRequest Request, Callback<GetSettingResponse> callback) {
-//        String api_request = "get_settings";
-//        String data = new Gson().toJson(Request);
-//        json().get_settings(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void add_user_service(AddUserServiceRequest Request, Callback<AddUserServiceResponse> callback) {
-//        String api_request = "add_user_services";
-//        String data = new Gson().toJson(Request);
-//        json().add_user_service(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_my_notifications(GetNotificationRequest Request, Callback<GetNotificationResponse> callback) {
-//        String api_request = "get_my_notifications";
-//        String data = new Gson().toJson(Request);
-//        json().get_my_notifications(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void set_call_status(CallStatusRequest Request, Callback<CallStatusResponse> callback) {
-//        String api_request = "set_open_call_push_status";
-//        String data = new Gson().toJson(Request);
-//        json().set_call_status(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void call_transaction(TransactionDetailsRequest Request, Callback<TransactionDetailsResponse> callback) {
-//        String api_request = "add_payment";
-//        String data = new Gson().toJson(Request);
-//        json().call_transaction(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//
-//    /*call_transaction*/
-//
-//    public void get_track_sheet_cat_data(GetTrackSheetRequest Request, Callback<GetTrackSheetResponse> callback) {
-//        String api_request = "get_track_sheet_cat_data";
-//        String data = new Gson().toJson(Request);
-//        json().get_track_sheet_cat_data(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-//
-//    public void get_my_kyc(GetMyKycRequest Request, Callback<GetMyKycResponse> callback) {
-//        String api_request = "get_my_kyc";
-//        String data = new Gson().toJson(Request);
-//        json().get_my_kyc(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-    /*add_user_service*/
-
-
-//    public void signup_user(SignUpRequest Request, Callback<SignUpResponce> callback) {
-//        String api_request = "signup_user";
-//        String data = new Gson().toJson(Request);
-//        json().signup_user(api_id, api_secret, api_request, data).enqueue(callback);
-//    }
-
-//    public void signup_user(SignUpRequest request, MultipartBody.Part file, Callback<SignUpResponce> callback) {
-//        String api_request = "signup_user";
-//        String data = new Gson().toJson(request);
-//        //json().add_contact(api_id, api_secret, api_request, data).enqueue(callback);
-//        json().signup_user(
-//                RequestBody.create(MediaType.parse("text/plain"), api_id),
-//                RequestBody.create(MediaType.parse("text/plain"), api_secret),
-//                RequestBody.create(MediaType.parse("text/plain"), api_request),
-//                RequestBody.create(MediaType.parse("text/plain"), data)
-//                , file).enqueue(callback);
-//    }
-
-//    public void update_user(UpdateProfileRequest request, MultipartBody.Part file, Callback<UpdateProfileResponce> callback) {
-//        String api_request = "update_user";
-//        String data = new Gson().toJson(request);
-//        //json().add_contact(api_id, api_secret, api_request, data).enqueue(callback);
-//        json().update_user(
-//                RequestBody.create(MediaType.parse("text/plain"), api_id),
-//                RequestBody.create(MediaType.parse("text/plain"), api_secret),
-//                RequestBody.create(MediaType.parse("text/plain"), api_request),
-//                RequestBody.create(MediaType.parse("text/plain"), data)
-//                , file).enqueue(callback);
-//    }
-
+    public void get_dispatched_vehicle(GetDispatchedTawVehicleRequest Request, Callback<GetDispatchedTawVehicleResponse> callback) {
+        String api_request = "get_officer_dispatched_taw_vehicle";
+        String data = new Gson().toJson(Request);
+        json().get_dispatched_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
 
 }

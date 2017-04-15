@@ -9,11 +9,11 @@ import android.view.ViewGroup;
 
 import rto.example.com.rto.R;
 
-public class FragHomeUser extends Fragment {
+public class FragAddTawVehicle extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.frag_home_user, container, false);
+        return inflater.inflate(R.layout.frag_add_taw_vehicle, container, false);
     }
 }

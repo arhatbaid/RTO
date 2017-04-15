@@ -12,29 +12,30 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.pixplicity.easyprefs.library.Prefs;
+
 import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
-import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.adapters.AdapterVehicle;
-import rto.example.com.rto.frameworks.city.GetCityRequest;
-import rto.example.com.rto.frameworks.city.GetCityResponse;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleData;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
+import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
-public class FragVehicleList extends Fragment implements View.OnClickListener{
+public class FragVehicleList extends Fragment implements
+        View.OnClickListener, AdapterVehicle.DeleteVehicleListener {
 
     private RecyclerView recyclerVehicle;
     private Button btnAdd;
     private AdapterVehicle adapterVehicle;
     private RelativeLayout rlLoading;
 
-    private ArrayList<GetVehicleData> arrVehicle= new ArrayList<>();
+    private ArrayList<GetVehicleData> arrVehicle = new ArrayList<>();
 
 
     @Nullable
@@ -43,14 +44,8 @@ public class FragVehicleList extends Fragment implements View.OnClickListener{
 
         View view = inflater.inflate(R.layout.frag_vehicle_list, container, false);
         findViews(view);
-
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         callGetVehicleList();
+        return view;
     }
 
     private void findViews(View view) {
@@ -70,7 +65,7 @@ public class FragVehicleList extends Fragment implements View.OnClickListener{
     private void callGetVehicleList() {
         rlLoading.setVisibility(View.VISIBLE);
         GetVehicleRequest getVehicleRequest = new GetVehicleRequest();
-        getVehicleRequest.setUserId("2");
+        getVehicleRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
         getVehicleRequest.setUserType("3");
         WebAPIClient.getInstance(getActivity()).get_user_vehicle(getVehicleRequest, new Callback<GetVehicleResponse>() {
             @Override
@@ -81,20 +76,9 @@ public class FragVehicleList extends Fragment implements View.OnClickListener{
                 arrVehicle.clear();
                 if (getVehicleResponse.getFlag().equals("true")) {
 
-                    arrVehicle.addAll(getVehicleResponse.getData()) ;
-                    adapterVehicle= new AdapterVehicle(arrVehicle,getActivity());
+                    arrVehicle.addAll(getVehicleResponse.getData());
+                    adapterVehicle = new AdapterVehicle(arrVehicle, getActivity(), FragVehicleList.this);
                     recyclerVehicle.setAdapter(adapterVehicle);
-
-
-
-                    /*ArrayList<String> tmpData = new ArrayList<>();
-                    if (listCity.size() > 0) {
-                        for (int i = 0, count = listCity.size(); i < count; i++) {
-                            tmpData.add(listCity.get(i).getName());
-                        }
-                        rlLoading.setVisibility(View.GONE);
-//                        placeDialogue("city", tmpData);
-                    }*/
                 }
             }
 
@@ -107,19 +91,25 @@ public class FragVehicleList extends Fragment implements View.OnClickListener{
 
     private void gotoFragDetails() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        FragRegisterVehicle fragRegisterVehicle = new FragRegisterVehicle();
-        fragRegisterVehicle.setGetVehicleData(null);
-        ft.addToBackStack(FragRegisterVehicle.class.getName());
+        FragEditRegisterVehicle fragEditRegisterVehicle = new FragEditRegisterVehicle();
+        fragEditRegisterVehicle.setIsRegister(true); // Register
+        ft.addToBackStack(FragEditRegisterVehicle.class.getName());
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
-        ft.replace(R.id.fragContainer, fragRegisterVehicle, FragRegisterVehicle.class.getName());
+        ft.replace(R.id.fragContainer, fragEditRegisterVehicle, FragEditRegisterVehicle.class.getName());
         ft.commit();
     }
 
     @Override
     public void onClick(View view) {
-        if (view==btnAdd){
+        if (view == btnAdd) {
             gotoFragDetails();
         }
+    }
+
+    @Override
+    public void viewDeleted(int pos) {
+        arrVehicle.remove(pos);
+        adapterVehicle.notifyDataSetChanged();
     }
 }

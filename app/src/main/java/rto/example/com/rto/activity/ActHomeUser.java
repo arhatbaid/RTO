@@ -20,6 +20,8 @@ import rto.example.com.rto.adapters.AdapterMenu;
 import rto.example.com.rto.fragment.FragHomeUser;
 import rto.example.com.rto.fragment.FragRegisterVehicle;
 import rto.example.com.rto.fragment.FragSearchTawVehicle;
+import rto.example.com.rto.fragment.FragAddTawVehicle;
+import rto.example.com.rto.fragment.FragEditRegisterVehicle;
 import rto.example.com.rto.fragment.FragVehicleList;
 
 public class ActHomeUser extends AppCompatActivity implements
@@ -41,7 +43,7 @@ View.OnClickListener{
         mDrawer.setContentView(R.layout.act_home_user);
         mDrawer.setMenuView(R.layout.menu_bar);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragContainer, new FragHomeUser(), FragHomeUser.class.getName()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragContainer, new FragVehicleList(), FragVehicleList.class.getName()).commit();
 
         lstItem = (ListView) findViewById(R.id.lstItem);
         imgMenu = (ImageView) findViewById(R.id.imgMenu);
@@ -72,26 +74,31 @@ View.OnClickListener{
                 break;
             case 1:
                 mDrawer.closeMenu();
+                FragEditRegisterVehicle fragEditRegisterVehicle = (FragEditRegisterVehicle) getSupportFragmentManager().findFragmentByTag(FragEditRegisterVehicle.class.getName());
+                if (fragEditRegisterVehicle != null && fragEditRegisterVehicle.isVisible())
                 FragSearchTawVehicle fragSearchTawVehicle = (FragSearchTawVehicle) getSupportFragmentManager().findFragmentByTag(FragSearchTawVehicle.class.getName());
                 if (fragSearchTawVehicle != null && fragSearchTawVehicle.isVisible())
                     return;
+                FragEditRegisterVehicle fragEditRegisterVehicle1 = new FragEditRegisterVehicle();
+                ft.addToBackStack(FragEditRegisterVehicle.class.getName());
                 FragSearchTawVehicle fragSearchTawVehicle1 = new FragSearchTawVehicle();
                 ft.addToBackStack(FragSearchTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
+                ft.replace(R.id.fragContainer, fragEditRegisterVehicle1, FragEditRegisterVehicle.class.getName());
                 ft.replace(R.id.fragContainer, fragSearchTawVehicle1, FragSearchTawVehicle.class.getName());
                 ft.commit();
                 break;
             case 2:
                 mDrawer.closeMenu();
-                FragHomeUser fragHomeUser = (FragHomeUser) getSupportFragmentManager().findFragmentByTag(FragHomeUser.class.getName());
-                if (fragHomeUser != null && fragHomeUser.isVisible())
+                FragAddTawVehicle fragAddTawVehicle = (FragAddTawVehicle) getSupportFragmentManager().findFragmentByTag(FragAddTawVehicle.class.getName());
+                if (fragAddTawVehicle != null && fragAddTawVehicle.isVisible())
                     return;
-                FragHomeUser fragHomeUser1 = new FragHomeUser();
-                ft.addToBackStack(FragHomeUser.class.getName());
+                FragAddTawVehicle fragAddTawVehicle1 = new FragAddTawVehicle();
+                ft.addToBackStack(FragAddTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragHomeUser1, FragHomeUser.class.getName());
+                ft.replace(R.id.fragContainer, fragAddTawVehicle1, FragAddTawVehicle.class.getName());
                 ft.commit();
                 break;
             case 3:
