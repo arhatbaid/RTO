@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,8 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         txtVehicleNumber = (EditText) view.findViewById(R.id.txtVehicleNumber);
         rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
         btnSearch = (Button) view.findViewById(R.id.btnSearch);
+
+        txtSeriesNumber.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
         btnSearch.setOnClickListener(this);
         txtState.setOnClickListener(this);
         txtCity.setOnClickListener(this);
@@ -94,13 +97,12 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
             public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
+                rlLoading.setVisibility(View.GONE);
                 GetStateResponse getStateResponse = response.body();
                 if (getStateResponse.getFlag().equals("true")) {
                     listState.clear();
                     listState.addAll(getStateResponse.getData());
-                    if (Prefs.getString(PrefsKeys.State, "").isEmpty())
-                        rlLoading.setVisibility(View.GONE);
-                    else
+                    if (!Prefs.getString(PrefsKeys.State, "").isEmpty())
                         getStateId();
 
                 } else if (getStateResponse.getFlag().equals("false")) {
@@ -125,11 +127,11 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override
             public void onResponse(Call<GetCityResponse> call, Response<GetCityResponse> response) {
+                rlLoading.setVisibility(View.GONE);
                 GetCityResponse getCityResponse = response.body();
                 listCity.clear();
                 if (getCityResponse.getFlag().equals("true")) {
                     listCity.addAll(getCityResponse.getData());
-                    rlLoading.setVisibility(View.GONE);
                     /*ArrayList<String> tmpData = new ArrayList<>();
                     if (listCity.size() > 0) {
                         for (int i = 0, count = listCity.size(); i < count; i++) {
@@ -250,10 +252,10 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         searchTawVehicleRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
         searchTawVehicleRequest.setVehicleCityId(CITY_ID);
         searchTawVehicleRequest.setVehicleStateId(STATE_ID);
-        //searchTawVehicleRequest.setVehicleNo(txtVehicleNumber.getText().toString()+"");
-        searchTawVehicleRequest.setVehicleNo("MJ");
-        // searchTawVehicleRequest.setVehicleSeriesNo(txtSeriesNumber.getText().toString()+"");
-        searchTawVehicleRequest.setVehicleSeriesNo("8877");
+        searchTawVehicleRequest.setVehicleNo(txtVehicleNumber.getText().toString()+"");
+        //searchTawVehicleRequest.setVehicleNo("MJ");
+         searchTawVehicleRequest.setVehicleSeriesNo(txtSeriesNumber.getText().toString()+"");
+        //searchTawVehicleRequest.setVehicleSeriesNo("8877");
         WebAPIClient.getInstance(getActivity()).search_taw_vehicle(searchTawVehicleRequest, new Callback<SearchTawVehicleResponse>() {
             @Override
             public void onResponse(Call<SearchTawVehicleResponse> call, Response<SearchTawVehicleResponse> response) {
@@ -263,8 +265,11 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                 arrPoliceStation.clear();
                 if (searchTawVehicleResponse.getFlag().equals("true")) {
 
-                } else
-                    callGetNearestPoliceStations();
+                }
+                else
+
+                    gotoFragDetails();
+                    //callGetNearestPoliceStations();
             }
 
             @Override
@@ -291,7 +296,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                 if (getNearPoliceStationResponse.getFlag().equals("true")) {
 
                     arrPoliceStation.addAll(getNearPoliceStationResponse.getData());
-                    gotoFragDetails(arrPoliceStation);
+                    gotoFragDetails();
 
                 }
             }
@@ -303,10 +308,10 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         });
     }
 
-    private void gotoFragDetails(ArrayList<GetNearPoliceStationData> getNearPoliceStationDatas) {
+    private void gotoFragDetails() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         FragMap fragMap = new FragMap();
-        fragMap.setArrPoliceStations(getNearPoliceStationDatas);
+       // fragMap.setArrPoliceStations(getNearPoliceStationDatas);
         ft.addToBackStack(FragMap.class.getName());
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);

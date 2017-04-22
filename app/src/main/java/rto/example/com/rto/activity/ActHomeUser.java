@@ -85,19 +85,19 @@ View.OnClickListener{
                 ft.replace(R.id.fragContainer, fragSearchTawVehicle1, FragSearchTawVehicle.class.getName());
                 ft.commit();
                 break;
+//            case 1:
+//                mDrawer.closeMenu();
+//                FragAddTawVehicle fragAddTawVehicle = (FragAddTawVehicle) getSupportFragmentManager().findFragmentByTag(FragAddTawVehicle.class.getName());
+//                if (fragAddTawVehicle != null && fragAddTawVehicle.isVisible())
+//                    return;
+//                FragAddTawVehicle fragAddTawVehicle1 = new FragAddTawVehicle();
+//                ft.addToBackStack(FragAddTawVehicle.class.getName());
+//                ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+//                        R.anim.slide_in_right, R.anim.slide_out_right);
+//                ft.replace(R.id.fragContainer, fragAddTawVehicle1, FragAddTawVehicle.class.getName());
+//                ft.commit();
+//                break;
             case 2:
-                mDrawer.closeMenu();
-                FragAddTawVehicle fragAddTawVehicle = (FragAddTawVehicle) getSupportFragmentManager().findFragmentByTag(FragAddTawVehicle.class.getName());
-                if (fragAddTawVehicle != null && fragAddTawVehicle.isVisible())
-                    return;
-                FragAddTawVehicle fragAddTawVehicle1 = new FragAddTawVehicle();
-                ft.addToBackStack(FragAddTawVehicle.class.getName());
-                ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
-                        R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragAddTawVehicle1, FragAddTawVehicle.class.getName());
-                ft.commit();
-                break;
-            case 3:
                 showConfirmDialog();
                 break;
         }

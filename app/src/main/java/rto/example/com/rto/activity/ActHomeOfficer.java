@@ -20,6 +20,7 @@ import rto.example.com.rto.adapters.AdapterMenu;
 import rto.example.com.rto.fragment.FragAddTawVehicle;
 import rto.example.com.rto.fragment.FragGetDispatchedTawVehicle;
 import rto.example.com.rto.fragment.FragSearchTawVehicle;
+import rto.example.com.rto.fragment.FragTawVehicleList;
 import rto.example.com.rto.fragment.FragVehicleList;
 
 public class ActHomeOfficer extends AppCompatActivity implements
@@ -38,10 +39,10 @@ public class ActHomeOfficer extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_home_user);
         mDrawer = MenuDrawer.attach(this, MenuDrawer.Type.OVERLAY);
-        mDrawer.setContentView(R.layout.act_home_user);
+        mDrawer.setContentView(R.layout.act_home_officer);
         mDrawer.setMenuView(R.layout.menu_bar);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragContainer, new FragAddTawVehicle(), FragAddTawVehicle.class.getName()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragContainerOfficer, new FragAddTawVehicle(), FragAddTawVehicle.class.getName()).commit();
 
         lstItem = (ListView) findViewById(R.id.lstItem);
         imgMenu = (ImageView) findViewById(R.id.imgMenu);
@@ -58,16 +59,16 @@ public class ActHomeOfficer extends AppCompatActivity implements
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         switch (position) {
-            case 0:
+            case 2:
                 mDrawer.closeMenu();
-                FragAddTawVehicle fragVehicleList = (FragAddTawVehicle) getSupportFragmentManager().findFragmentByTag(FragAddTawVehicle.class.getName());
-                if (fragVehicleList != null && fragVehicleList.isVisible())
+                FragTawVehicleList fragTawVehicleList = (FragTawVehicleList) getSupportFragmentManager().findFragmentByTag(FragTawVehicleList.class.getName());
+                if (fragTawVehicleList != null && fragTawVehicleList.isVisible())
                     return;
-                FragAddTawVehicle fragVehicleList1 = new FragAddTawVehicle();
-                ft.addToBackStack(FragAddTawVehicle.class.getName());
+                FragTawVehicleList fragTawVehicleList1 = new FragTawVehicleList();
+                ft.addToBackStack(FragTawVehicleList.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragVehicleList1, FragAddTawVehicle.class.getName());
+                ft.replace(R.id.fragContainerOfficer, fragTawVehicleList1, FragTawVehicleList.class.getName());
                 ft.commit();
                 break;
             case 1:
@@ -81,11 +82,11 @@ public class ActHomeOfficer extends AppCompatActivity implements
                 ft.addToBackStack(FragSearchTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragSearchTawVehicle1, FragSearchTawVehicle.class.getName());
-                ft.replace(R.id.fragContainer, fragEditRegisterVehicle1, FragGetDispatchedTawVehicle.class.getName());
+                ft.replace(R.id.fragContainerOfficer, fragSearchTawVehicle1, FragSearchTawVehicle.class.getName());
+                ft.replace(R.id.fragContainerOfficer, fragEditRegisterVehicle1, FragGetDispatchedTawVehicle.class.getName());
                 ft.commit();
                 break;
-            case 2:
+            case 0:
                 mDrawer.closeMenu();
                 FragAddTawVehicle fragAddTawVehicle = (FragAddTawVehicle) getSupportFragmentManager().findFragmentByTag(FragAddTawVehicle.class.getName());
                 if (fragAddTawVehicle != null && fragAddTawVehicle.isVisible())
@@ -94,7 +95,7 @@ public class ActHomeOfficer extends AppCompatActivity implements
                 ft.addToBackStack(FragAddTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);
-                ft.replace(R.id.fragContainer, fragAddTawVehicle1, FragAddTawVehicle.class.getName());
+                ft.replace(R.id.fragContainerOfficer, fragAddTawVehicle1, FragAddTawVehicle.class.getName());
                 ft.commit();
                 break;
             case 3:

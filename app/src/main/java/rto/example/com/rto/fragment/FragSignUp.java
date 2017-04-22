@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -360,12 +361,22 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         } else if (v == rbMale) {
             // Handle clicks for btnSignUp
         } else if (v == lblLogin) {
-            getActivity().getSupportFragmentManager().popBackStack();
+            gotoFragLogin();
         } else if (v == txtCity) {
             openCityDialog();
         } else if (v == txtState) {
             openStateDilaog();
         }
+    }
+
+    private void gotoFragLogin() {
+        FragLogin fragLogin = new FragLogin();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.addToBackStack(FragLogin.class.getName());
+        ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+                R.anim.slide_in_right, R.anim.slide_out_right);
+        ft.replace(R.id.fragContainer, fragLogin, FragLogin.class.getName());
+        ft.commit();
     }
 
 }

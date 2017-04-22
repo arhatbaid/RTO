@@ -2,6 +2,7 @@ package rto.example.com.rto.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,6 +19,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +37,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,9 +51,12 @@ import rto.example.com.rto.R;
 import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.adapters.AdapterVehicle;
 import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationData;
+import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationRequest;
+import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationResponse;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
 import rto.example.com.rto.helper.AppHelper;
+import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
 import static rto.example.com.rto.R.id.rlLoading;
@@ -66,7 +73,7 @@ public class FragMap extends Fragment implements
         GoogleMap.OnMapLoadedCallback,
         GoogleMap.OnInfoWindowClickListener {
 
-     private ActHomeUser root;
+    private ActHomeUser root;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_LOCATION = 1;
 
@@ -79,20 +86,20 @@ public class FragMap extends Fragment implements
     private boolean isMapClicked = false;
     private LatLng sourcelatlng, destLatlng;
 
-    private ArrayList<GetNearPoliceStationData> arrPoliceStations;
-
-    public void setArrPoliceStations(ArrayList<GetNearPoliceStationData> arrPoliceStations) {
-        this.arrPoliceStations = arrPoliceStations;
-    }
+    private ArrayList<GetNearPoliceStationData> arrPoliceStations = new ArrayList<>();
 
     private SupportMapFragment map;
+    private RelativeLayout rlLoading;
 
     private String eventName, eventMsg;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.frag_map, container, false);
+
+        View view = inflater.inflate(R.layout.frag_map, container, false);
+        findViews(view);
+        return view;
     }
 
     @Override
@@ -101,21 +108,61 @@ public class FragMap extends Fragment implements
 
     }
 
+    private void findViews(View view) {
+        rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
+    }
 
     private void retriveEvents() {
-        for (int i = 0; i < arrPoliceStations.size(); i++){
+        for (int i = 0; i < arrPoliceStations.size(); i++) {
 
             double lat = Double.parseDouble(arrPoliceStations.get(i).getLatitude());
             double lng = Double.parseDouble(arrPoliceStations.get(i).getLatitude());
-            drawMarker(new LatLng(lat,lng),  eventMsg, eventName);}
+            drawMarker(new LatLng(lat, lng), eventMsg, eventName);
+        }
     }
 
-    private void drawMarker(LatLng point,  String msg, String eventName) {
+    private void callGetNearestPoliceStations(String lat, String lng) {
+        rlLoading.setVisibility(View.VISIBLE);
+        GetNearPoliceStationRequest getNearPoliceStationRequest = new GetNearPoliceStationRequest();
+        getNearPoliceStationRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
+        getNearPoliceStationRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
+        getNearPoliceStationRequest.setLatitude(lat);
+        getNearPoliceStationRequest.setLongitude(lng);
+        WebAPIClient.getInstance(getActivity()).search_nearest_police_station(getNearPoliceStationRequest, new Callback<GetNearPoliceStationResponse>() {
+            @Override
+            public void onResponse(Call<GetNearPoliceStationResponse> call, Response<GetNearPoliceStationResponse> response) {
+                rlLoading.setVisibility(View.GONE);
+
+                GetNearPoliceStationResponse getNearPoliceStationResponse = response.body();
+                arrPoliceStations.clear();
+                String flag = getNearPoliceStationResponse.getFlag();
+                Log.e("flag",flag);
+                if (getNearPoliceStationResponse.getFlag().equals("true")) {
+
+                    arrPoliceStations.addAll(getNearPoliceStationResponse.getData());
+                    retriveEvents();
+                    //gotoFragDetails(arrPoliceStation);
+
+                }else{
+                    Toast.makeText(root, "There is no any police station near to your location", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetNearPoliceStationResponse> call, Throwable t) {
+                rlLoading.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void drawMarker(LatLng point, String msg, String eventName) {
 
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(point)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
                 .title(msg).snippet(eventName));
+
+        marker.showInfoWindow();
 
     }
 
@@ -123,7 +170,7 @@ public class FragMap extends Fragment implements
         googleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-               .addApi(LocationServices.API)
+                .addApi(LocationServices.API)
                 .build();
     }
 
@@ -156,7 +203,7 @@ public class FragMap extends Fragment implements
     }
 
     protected void stopLocationUpdates() {
-       LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, (com.google.android.gms.location.LocationListener) this);
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, (com.google.android.gms.location.LocationListener) this);
     }
 
     protected void startLocationUpdates() {
@@ -223,12 +270,17 @@ public class FragMap extends Fragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-         startLocationUpdates();
+        if (googleApiClient.isConnected())
+            startLocationUpdates();
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
 
@@ -241,8 +293,7 @@ public class FragMap extends Fragment implements
                 currLat = mLastLocation.getLatitude();
                 currLng = mLastLocation.getLongitude();
 
-
-
+                callGetNearestPoliceStations(currLat + "", currLng + "");
             }
         }
     }
@@ -310,9 +361,13 @@ public class FragMap extends Fragment implements
     @Override
     public void onMapLoaded() {
         if (AppHelper.isNetConnected(getActivity())) {
-            retriveEvents();
+
+//            if (arrPoliceStations!=null&&arrPoliceStations.size()>0)
+//            retriveEvents();
 
             animateCamara();
+
+
         } else
             AppHelper.showAlertDialog(getActivity(), getString(R.string.no_internet), getString(R.string.alert));
 

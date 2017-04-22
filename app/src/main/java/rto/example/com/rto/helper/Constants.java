@@ -22,6 +22,9 @@ public class Constants {
     public static final String STATE = "state";
     public static final String CITY = "city";
 
+    public static final String TYPE_USER = "3";
+    public static final String TYPE_OFFICER = "2";
+
 
     public static final int MONEY_DEDUCTED = 200;
 

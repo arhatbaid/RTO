@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class AdapterDispatchedTawVehicles extends ArrayAdapter<DispatchedTawVehi
     private ArrayList<DispatchedTawVehicle> arrayDispatchedTawVehicles;
     private int[] images = null;
 
+
     public AdapterDispatchedTawVehicles(Context context, int resource, ArrayList<DispatchedTawVehicle> arrayDispatchedTawVehicles) {
         super(context, 0, arrayDispatchedTawVehicles);
         this.context = context;
@@ -26,13 +28,14 @@ public class AdapterDispatchedTawVehicles extends ArrayAdapter<DispatchedTawVehi
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder v = null;
         if (convertView == null) {
             v = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.cell_vehicle_dispatch, parent, false);
             v.lblTime = (TextView) convertView.findViewById(R.id.lblTime);
             v.lblVehicleNumberPlate = (TextView) convertView.findViewById(R.id.lblVehicleNumberPlate);
+            v.btnDispatch = (Button) convertView.findViewById(R.id.btnDispatch);
             convertView.setTag(v);
         } else {
             v = (ViewHolder) convertView.getTag();
@@ -40,11 +43,16 @@ public class AdapterDispatchedTawVehicles extends ArrayAdapter<DispatchedTawVehi
         v.lblTime.setText(arrayDispatchedTawVehicles.get(position).getAddedOn());
         v.lblVehicleNumberPlate.setText(arrayDispatchedTawVehicles.get(position).getVehicleNumberPlate());
 
+
+
         return convertView;
     }
 
     private class ViewHolder {
         TextView lblVehicleNumberPlate;
         TextView lblTime;
+        Button btnDispatch;
     }
+
+
 }

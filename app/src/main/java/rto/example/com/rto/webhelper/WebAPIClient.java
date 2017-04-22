@@ -18,18 +18,24 @@ import okhttp3.OkHttpClient;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rto.example.com.rto.frameworks.addtawvehicle.AddTawVehicleRequest;
+import rto.example.com.rto.frameworks.addtawvehicle.AddTawVehicleResponse;
 import rto.example.com.rto.frameworks.addvehicle.AddVehicleRequest;
 import rto.example.com.rto.frameworks.addvehicle.AddVehicleResponse;
 import rto.example.com.rto.frameworks.city.GetCityRequest;
 import rto.example.com.rto.frameworks.city.GetCityResponse;
 import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleRequest;
 import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleResponse;
+import rto.example.com.rto.frameworks.dispatchtawvehicle.DispatchTawVehicleRequest;
+import rto.example.com.rto.frameworks.dispatchtawvehicle.DispatchTawVehicleResponse;
 import rto.example.com.rto.frameworks.editvehicle.EditVehicleRequest;
 import rto.example.com.rto.frameworks.editvehicle.EditVehicleResponse;
 import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationRequest;
 import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationResponse;
 import rto.example.com.rto.frameworks.getdispatchedtawvehicles.GetDispatchedTawVehicleRequest;
 import rto.example.com.rto.frameworks.getdispatchedtawvehicles.GetDispatchedTawVehicleResponse;
+import rto.example.com.rto.frameworks.getofficertawvehicle.GetOfficerTawVehicleRequest;
+import rto.example.com.rto.frameworks.getofficertawvehicle.GetOfficerTawVehicleResponse;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
 import rto.example.com.rto.frameworks.searchtawvehicle.SearchTawVehicleRequest;
@@ -138,6 +144,12 @@ public class WebAPIClient {
         json().add_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
     }
 
+    public void add_taw_vehicle(AddTawVehicleRequest Request, Callback<AddTawVehicleResponse> callback) {
+        String api_request = "add_taw_vehicle";
+        String data = new Gson().toJson(Request);
+        json().add_taw_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
     public void edit_vehicle(EditVehicleRequest Request, Callback<EditVehicleResponse> callback) {
         String api_request = "edit_vehicle";
         String data = new Gson().toJson(Request);
@@ -191,6 +203,18 @@ public class WebAPIClient {
         String api_request = "get_officer_dispatched_taw_vehicle";
         String data = new Gson().toJson(Request);
         json().get_dispatched_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void get_officer_taw_vehicle(GetOfficerTawVehicleRequest Request, Callback<GetOfficerTawVehicleResponse> callback) {
+        String api_request = "get_officer_taw_vehicle";
+        String data = new Gson().toJson(Request);
+        json().get_officer_taw_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
+    }
+
+    public void dispatch_taw_vehicle(DispatchTawVehicleRequest Request, Callback<DispatchTawVehicleResponse> callback) {
+        String api_request = "dispatch_taw_vehicle";
+        String data = new Gson().toJson(Request);
+        json().dispatch_taw_vehicle(api_id, api_secret, api_request, data).enqueue(callback);
     }
 
 }

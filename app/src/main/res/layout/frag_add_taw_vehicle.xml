@@ -1,11 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    >
+    android:layout_marginLeft="@dimen/common_padding"
+    android:layout_marginRight="@dimen/common_padding"
+    android:layout_marginTop="@dimen/small_padding"
+    android:background="@color/white"
+    android:clickable="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnAddVehicle">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
 
-</LinearLayout>
+                <EditText
+                    android:id="@+id/txtVehicleName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/vehicle_name"
+                    android:inputType="text|textNoSuggestions" />
+
+
+                <EditText
+                    android:id="@+id/txtVehicleState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Vehicle State"
+                    android:inputType="text|textNoSuggestions" />
+
+
+                <EditText
+                    android:id="@+id/txtVehicleCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Vehicle City"
+                    android:inputType="text|textNoSuggestions" />
+
+
+                <EditText
+                    android:id="@+id/txtSeriesNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/series_number"
+                    android:textAllCaps="true"
+                    android:inputType="textCapCharacters|textCapWords" />
+
+
+                <EditText
+                    android:id="@+id/txtVehicleNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/vehicle_number"
+                    android:maxLength="4"
+                    android:inputType="number|textNoSuggestions" />
+
+                <EditText
+                    android:id="@+id/txtState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="State"
+                     />
+
+                <EditText
+                    android:id="@+id/txtCityCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="City"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    />
+
+
+                <EditText
+                    android:id="@+id/txtAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="true"
+                    android:hint="Taw Address"
+                    android:inputType="text|textNoSuggestions" />
+
+                <EditText
+                    android:id="@+id/txtVehicleType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="@string/vehicle_type"
+                    android:inputType="text|textNoSuggestions" />
+
+
+            </LinearLayout>
+        </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/rlLoading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/grey_overlay"
+            android:clickable="true"
+            android:visibility="visible">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/common_padding"
+
+                app:cardElevation="10dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/common_padding"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/smallPadding"
+                        android:text="Loading..."
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16dp" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnAddVehicle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/small_padding"
+        android:layout_marginTop="@dimen/small_padding"
+        android:background="@color/colorPrimaryDark"
+        android:text="@string/register_vehicle"
+        android:textColor="@android:color/white" />
+</RelativeLayout>
