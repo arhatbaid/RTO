@@ -11,7 +11,9 @@ public class SigninResponse {
     private String flag;
     @SerializedName("result")
     @Expose
-    private String result;
+    private String result;@SerializedName("msg")
+    @Expose
+    private String msg;
     @SerializedName("data")
     @Expose
     private SigninData data;
@@ -40,4 +42,11 @@ public class SigninResponse {
         this.data = data;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 }

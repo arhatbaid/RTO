@@ -14,7 +14,9 @@ public class SignupRespose {
     private String result;
     @SerializedName("data")
     @Expose
-    private SignupData data;
+    private SignupData data; @SerializedName("msg")
+    @Expose
+    private String msg;
 
     public String getFlag() {
         return flag;
@@ -40,4 +42,12 @@ public class SignupRespose {
         this.data = data;
     }
 
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 }

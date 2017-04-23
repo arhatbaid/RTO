@@ -1,6 +1,7 @@
 package rto.example.com.rto.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -30,6 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
+import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.frameworks.addvehicle.AddVehicleRequest;
 import rto.example.com.rto.frameworks.addvehicle.AddVehicleResponse;
 import rto.example.com.rto.frameworks.city.GetCityData;
@@ -47,6 +49,8 @@ import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
 public class FragEditRegisterVehicle extends Fragment implements View.OnClickListener {
+
+    private ActHomeUser root;
 
     private EditText txtVehicleName;
     private EditText txtState;
@@ -82,15 +86,30 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         View view = inflater.inflate(R.layout.frag_register_vehicle, container, false);
         findViews(view);
+
         if (!isRegister) {
+            root.setActTitle("Update Vehicle");
             btnAddVehicle.setText("Update Vehicle");
             setContent();
-        }
+        }else
+            root.setActTitle("Add Vehicle");
         callState();
         if (!isRegister) {
             callCity(true);
         }
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        root = (ActHomeUser) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        root.setActTitle("Vehicles");
     }
 
     private void findViews(View view) {
@@ -220,6 +239,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
                 if (getEditVehicleResponse.getFlag().equals("true")) {
                     rlLoading.setVisibility(View.GONE);
                     getActivity().getSupportFragmentManager().popBackStack();
+                    Toast.makeText(root, "Vehicle updated successfully!", Toast.LENGTH_SHORT).show();
 
                 } else if (getEditVehicleResponse.getFlag().equals("false")) {
                     rlLoading.setVisibility(View.GONE);
@@ -480,7 +500,6 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             }
         }
     }
-
 
     private void openCityDialog() {
         int selectedOption = -1;

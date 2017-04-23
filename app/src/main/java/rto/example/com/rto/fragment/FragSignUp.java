@@ -72,8 +72,14 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.frag_signup, container, false);
         findViews(view);
-        callState();
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        callState();
     }
 
     private void findViews(View view) {
@@ -106,40 +112,11 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     }
 
 
-    private void callState() {
-        rlLoading.setVisibility(View.VISIBLE);
-        GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getStateRequest.setUserType("3");
-        WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
-            @Override
-            public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
-                GetStateResponse getStateResponse = response.body();
-                if (getStateResponse.getFlag().equals("true")) {
-                    listState.clear();
-                    listState.addAll(getStateResponse.getData());
-                    if (Prefs.getString(PrefsKeys.State, "").isEmpty())
-                        rlLoading.setVisibility(View.GONE);
-                    else
-                        getStateId();
-                } else if (getStateResponse.getFlag().equals("false")) {
-                    rlLoading.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetStateResponse> call, Throwable t) {
-                rlLoading.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "state_err" + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private void callCity() {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
         getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getCityRequest.setUserType("3");
+        getCityRequest.setUserType(Constants.TYPE_USER);
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override
@@ -169,102 +146,14 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void getStateId() {
-        //If no state is selected
-        if (listState.size() > 0) {
-            for (int i = 0, count = listState.size(); i < count; i++) {
-                if (Prefs.getString(PrefsKeys.State, "").equalsIgnoreCase(listState.get(i).getStateName())) {
-                    STATE_ID = listState.get(i).getStateId();
-                    callCity();
-                    break;
-                }
-            }
-        }
-    }
-
-    private void openStateDilaog() {
-        int selectedOption = -1;
-        ArrayList<String> tmpData = new ArrayList<>();
-        if (listState.size() > 0) {
-            if (Prefs.getString(PrefsKeys.State, "").isEmpty()) {
-                for (int i = 0, count = listState.size(); i < count; i++) {
-                    tmpData.add(listState.get(i).getStateName());
-                }
-            } else {
-                for (int i = 0, count = listState.size(); i < count; i++) {
-                    tmpData.add(listState.get(i).getStateName());
-                    if (listState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.State, ""))) {
-                        selectedOption = i;
-                    }
-                }
-            }
-        }
-        placeDialogue(Constants.STATE, tmpData, selectedOption);
-    }
-
-    private void openCityDialog() {
-        int selectedOption = -1;
-        ArrayList<String> tmpData = new ArrayList<>();
-        if (listCity.size() > 0) {
-            if (Prefs.getString(PrefsKeys.City, "").isEmpty()) {
-                for (int i = 0, count = listCity.size(); i < count; i++) {
-                    tmpData.add(listCity.get(i).getCityName());
-                }
-            } else {
-                for (int i = 0, count = listCity.size(); i < count; i++) {
-                    tmpData.add(listCity.get(i).getCityName());
-                    if (listCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.City, ""))) {
-                        selectedOption = i;
-                    }
-                }
-            }
-        }
-        placeDialogue(Constants.CITY, tmpData, selectedOption);
-    }
-
-    private void placeDialogue(final String type, ArrayList<String> tmpData, int selectedOption) {
-        //Todo show the last selected option
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-
-        builderSingle.setTitle("Select " + type + " :-");
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice, tmpData);
-
-        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-
-        builderSingle.setSingleChoiceItems(arrayAdapter, selectedOption, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String strName = arrayAdapter.getItem(which);
-                if (type.equalsIgnoreCase(Constants.STATE)) {
-                    STATE_ID = listState.get(which).getStateId();
-                    txtState.setText(strName);
-                    Prefs.putString(PrefsKeys.State, strName);
-                    Prefs.putString(PrefsKeys.City, "");
-                    txtCity.setText("");
-                    callCity();
-                    txtState.setError(null);
-                    txtCity.setError(null);
-                } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtCity.setText(strName);
-                    txtCity.setError(null);
-                    CITY_ID = listCity.get(which).getCityId();
-                    Prefs.putString(PrefsKeys.City, strName);
-                }
-                dialog.dismiss();
-            }
-        });
-        builderSingle.show();
-    }
 
     private void validateForm() {
         boolean fname = AppHelper.CheckEditText(txtFirstName);
         boolean lname = AppHelper.CheckEditText(txtLastName);
+        boolean address = AppHelper.CheckEditText(txtAddress);
+        boolean mobile = AppHelper.CheckEditText(txtPhoneNumber);
+        boolean state = AppHelper.CheckEditText(txtState);
+        boolean city = AppHelper.CheckEditText(txtCity);
 
         boolean male = rbFemale.isChecked();
         boolean female = rbMale.isChecked();
@@ -272,6 +161,21 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Please select gender", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        String email = txtEmail.getText().toString();
+        boolean finalEmail = false;
+        if (email.equals("")) {
+            txtEmail.setError("*");
+            return;
+        } else {
+            if (!AppHelper.IsValidEmailAddress(email)) {
+                txtEmail.setError("Invalid email");
+                return;
+            }
+
+
+        }
+
 
         //No need to do
        /* boolean officer = rbOfficer.isChecked();
@@ -282,9 +186,8 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             return;
         }*/
 
-//        boolean value5 = AppHelper.CheckEditText(txtCountry);
-        boolean state = AppHelper.CheckEditText(txtState);
-        boolean city = AppHelper.CheckEditText(txtCity);
+        //        boolean value5 = AppHelper.CheckEditText(txtCountry);
+
         //  boolean value2 = checkTc.isChecked();
 
 //        if (!value2) {
@@ -292,7 +195,9 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
 //            return;
 //        }
 
-        if (fname && lname && state && city) {
+        if (fname && lname && state && city && finalEmail && address && mobile)
+
+        {
             String SEX = "";
             String TYPE = "";
             int selectedSexId = rgSex.getCheckedRadioButtonId();
@@ -312,7 +217,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
             signupRequest.setStateId(STATE_ID);
             signupRequest.setCityId(CITY_ID);
             signupRequest.setAddress(txtAddress.getText().toString().trim());
-            signupRequest.setUserType("3");
+            signupRequest.setUserType(Constants.TYPE_USER);
             signupRequest.setGender(SEX);
             signupRequest.setPhone(txtPhoneNumber.getText().toString().trim());
             signupRequest.setEmailId(txtEmail.getText().toString().trim());
@@ -320,6 +225,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
 
             callSignUp(signupRequest);
         }
+
     }
 
     private void callSignUp(SignupRequest signupRequest) {
@@ -327,15 +233,17 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         WebAPIClient.getInstance(getActivity()).register_user(signupRequest, new Callback<SignupRespose>() {
             @Override
             public void onResponse(Call<SignupRespose> call, Response<SignupRespose> response) {
-                SignupRespose getStateResponse = response.body();
-                if (getStateResponse.getFlag().equals("true")) {
+                SignupRespose signupRespose = response.body();
+                if (signupRespose.getFlag().equals("true")) {
                     rlLoading.setVisibility(View.GONE);
 
                     startActivity(new Intent(getActivity(), ActHomeUser.class));
                     getActivity().finish();
 
-                } else if (getStateResponse.getFlag().equals("false")) {
+                } else if (signupRespose.getFlag().equals("false")) {
+
                     rlLoading.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), signupRespose.getMsg(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -354,7 +262,6 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         } else if (v == rbOfficer) {
             // Handle clicks for rbOfficer
         } else if (v == btnSignUp) {
-            //startActivity(new Intent(getActivity(), ActHomeUser.class));
             validateForm();
         } else if (v == rbFemale) {
             // Handle clicks for rbOfficer
@@ -378,5 +285,149 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         ft.replace(R.id.fragContainer, fragLogin, FragLogin.class.getName());
         ft.commit();
     }
+
+    private void callState() {
+        rlLoading.setVisibility(View.VISIBLE);
+        GetStateRequest getStateRequest = new GetStateRequest();
+        getStateRequest.setUserId("8");
+        getStateRequest.setUserType(Constants.TYPE_OFFICER);
+        WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
+            @Override
+            public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
+                GetStateResponse getStateResponse = response.body();
+                if (getStateResponse.getFlag().equals("true")) {
+                    listState.clear();
+                    listState.addAll(getStateResponse.getData());
+                    if (STATE_ID.isEmpty())
+                        rlLoading.setVisibility(View.GONE);
+                    else
+                        getStateId();
+                } else if (getStateResponse.getFlag().equals("false")) {
+                    rlLoading.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetStateResponse> call, Throwable t) {
+                rlLoading.setVisibility(View.GONE);
+                Toast.makeText(getActivity(), "state_err" + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getStateId() {
+        //If no state is selected
+        if (listState.size() > 0) {
+            for (int i = 0, count = listState.size(); i < count; i++) {
+                if (STATE_ID.equalsIgnoreCase(listState.get(i).getStateId())) {
+                    txtState.setText(listState.get(i).getStateCode());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void openStateDilaog() {
+        int selectedOption = -1;
+        ArrayList<String> tmpData = new ArrayList<>();
+        if (listState.size() > 0) {
+            for (int i = 0, count = listState.size(); i < count; i++) {
+                tmpData.add(listState.get(i).getStateName());
+            }
+        }
+        placeDialogue(Constants.STATE, tmpData, selectedOption);
+    }
+
+    private void placeDialogue(final String type, ArrayList<String> tmpData, int selectedOption) {
+        //Todo show the last selected option
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
+
+        builderSingle.setTitle("Select " + type + " :-");
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice, tmpData);
+
+        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builderSingle.setSingleChoiceItems(arrayAdapter, selectedOption, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strName = arrayAdapter.getItem(which);
+                if (type.equalsIgnoreCase(Constants.STATE)) {
+                    STATE_ID = listState.get(which).getStateId();
+
+                    txtState.setText(listState.get(which).getStateCode());
+                    txtCity.setText("");
+                    callCity(false);
+                    txtState.setError(null);
+                    txtCity.setError(null);
+                } else if (type.equalsIgnoreCase(Constants.CITY)) {
+                    txtCity.setText(listCity.get(which).getCityCode());
+                    txtCity.setError(null);
+                    CITY_ID = listCity.get(which).getCityId();
+                }
+                dialog.dismiss();
+            }
+        });
+        builderSingle.show();
+    }
+
+    private void callCity(final boolean predefined) {
+        rlLoading.setVisibility(View.VISIBLE);
+        GetCityRequest getCityRequest = new GetCityRequest();
+        getCityRequest.setUserId("8");
+        getCityRequest.setUserType(Constants.TYPE_OFFICER);
+        getCityRequest.setStateId(STATE_ID);
+        WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
+            @Override
+            public void onResponse(Call<GetCityResponse> call, Response<GetCityResponse> response) {
+                GetCityResponse getCityResponse = response.body();
+                listCity.clear();
+                if (getCityResponse.getFlag().equals("true")) {
+                    listCity.addAll(getCityResponse.getData());
+                    if (predefined) {
+                        getCityId();
+                    } else {
+
+                    }
+                    rlLoading.setVisibility(View.GONE);
+                } else if (getCityResponse.getFlag().equals("false")) {
+                    rlLoading.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetCityResponse> call, Throwable t) {
+                rlLoading.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void getCityId() {
+        //If no state is selected
+        if (listCity.size() > 0) {
+            for (int i = 0, count = listCity.size(); i < count; i++) {
+                if (CITY_ID.equalsIgnoreCase(listCity.get(i).getCityId())) {
+                    txtCity.setText(listCity.get(i).getCityCode());
+                    break;
+                }
+            }
+        }
+    }
+
+    private void openCityDialog() {
+        int selectedOption = -1;
+        ArrayList<String> tmpData = new ArrayList<>();
+        if (listCity.size() > 0) {
+            for (int i = 0, count = listCity.size(); i < count; i++) {
+                tmpData.add(listCity.get(i).getCityName());
+            }
+        }
+        placeDialogue(Constants.CITY, tmpData, selectedOption);
+    }
+
 
 }

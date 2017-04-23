@@ -1,5 +1,6 @@
 package rto.example.com.rto.fragment;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
+import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.adapters.AdapterTawVehicles;
 import rto.example.com.rto.frameworks.dispatchtawvehicle.DispatchTawVehicleRequest;
 import rto.example.com.rto.frameworks.dispatchtawvehicle.DispatchTawVehicleResponse;
@@ -38,6 +40,10 @@ import rto.example.com.rto.webhelper.WebAPIClient;
 
 public class FragTawVehicleList extends Fragment implements
         View.OnClickListener, AdapterTawVehicles.OnDispatchPressed {
+
+
+    private ActHomeOfficer root;
+
 
     private RecyclerView recyclerVehicle;
     private Button btnAdd;
@@ -53,7 +59,7 @@ public class FragTawVehicleList extends Fragment implements
 
         View view = inflater.inflate(R.layout.frag_list_taw_vehicle, container, false);
         findViews(view);
-
+        root.setActTitle("Taw Vehicles");
         return view;
     }
 
@@ -76,6 +82,14 @@ public class FragTawVehicleList extends Fragment implements
         btnAdd.setOnClickListener(this);
 
     }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        root = (ActHomeOfficer) activity;
+
+    }
+
 
     private void callGetVehicleList() {
         rlLoading.setVisibility(View.VISIBLE);
@@ -124,7 +138,7 @@ public class FragTawVehicleList extends Fragment implements
         dispatchTawVehicleRequest.setAmount(amount);
         dispatchTawVehicleRequest.setChallanNumber(chllanNumber);
 
-        Log.e("taw_id",arrVehicle.get(pos).getTawId());
+        Log.e("taw_id", arrVehicle.get(pos).getTawId());
         dispatchTawVehicleRequest.setTawIds(arrVehicle.get(pos).getTawId());
 
         WebAPIClient.getInstance(getActivity()).dispatch_taw_vehicle(dispatchTawVehicleRequest, new Callback<DispatchTawVehicleResponse>() {
@@ -160,11 +174,11 @@ public class FragTawVehicleList extends Fragment implements
 
         dialogBuilder.setPositiveButton("Dispatch", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                boolean amount  = AppHelper.CheckEditText(txtAmount);
-                boolean challan_number  = AppHelper.CheckEditText(txtChallan);
-                if (amount&&challan_number){
+                boolean amount = AppHelper.CheckEditText(txtAmount);
+                boolean challan_number = AppHelper.CheckEditText(txtChallan);
+                if (amount && challan_number) {
                     dialog.dismiss();
-                    callDispatchVehicle(pos,txtAmount.getText().toString(),txtChallan.getText().toString());
+                    callDispatchVehicle(pos, txtAmount.getText().toString(), txtChallan.getText().toString());
                 }
             }
         });
@@ -185,7 +199,6 @@ public class FragTawVehicleList extends Fragment implements
             gotoFragDetails();
         }
     }
-
 
 
     @Override

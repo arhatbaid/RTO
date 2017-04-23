@@ -60,6 +60,17 @@
             android:background="@color/colorPrimary"
             android:text="Search"
             android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btnNearestPoliceStation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lblLogin"
+            android:layout_marginTop="@dimen/common_padding"
+            android:background="@color/colorPrimary"
+            android:text="Nearest Police Station"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <RelativeLayout

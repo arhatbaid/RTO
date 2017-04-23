@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.pixplicity.easyprefs.library.Prefs;
 
@@ -30,6 +31,7 @@ public class ActHomeOfficer extends AppCompatActivity implements
     private MenuDrawer mDrawer;
     private ListView lstItem;
     private ImageView imgMenu = null;
+    private TextView lblTitle ;
 
     private AdapterMenu adapter;
     private String[] menuItem;
@@ -46,6 +48,7 @@ public class ActHomeOfficer extends AppCompatActivity implements
 
         lstItem = (ListView) findViewById(R.id.lstItem);
         imgMenu = (ImageView) findViewById(R.id.imgMenu);
+        lblTitle = (TextView) findViewById(R.id.lblTitle);
         menuItem = getResources().getStringArray(R.array.menu_item_officer);
 
         adapter = new AdapterMenu(getApplicationContext(), 0, menuItem);
@@ -53,6 +56,10 @@ public class ActHomeOfficer extends AppCompatActivity implements
 
         lstItem.setOnItemClickListener(this);
         imgMenu.setOnClickListener(this);
+    }
+
+    public void setActTitle(String text) {
+        lblTitle.setText(text);
     }
 
     @Override

@@ -27,6 +27,7 @@ import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.activity.ActLoginSignUp;
 import rto.example.com.rto.frameworks.signin.SigninRequest;
 import rto.example.com.rto.frameworks.signin.SigninResponse;
+import rto.example.com.rto.helper.AppHelper;
 import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
@@ -104,6 +105,7 @@ public class FragLogin extends Fragment implements View.OnClickListener {
                     startActivity(new Intent(getActivity(), rbOfficer.isChecked() ? ActHomeOfficer.class : ActHomeUser.class));
                     getActivity().finish();
                 }
+                else Toast.makeText(getActivity(), signinResponse.getMsg(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -136,15 +138,37 @@ public class FragLogin extends Fragment implements View.OnClickListener {
     }
 
     private boolean isValid() {
-        if (txtEmail.getText().toString().trim().isEmpty()) {
-            Toast.makeText(root, "Please enter valid email address", Toast.LENGTH_SHORT).show();
-            return false;
-        }
 
-        if (txtPassword.getText().toString().trim().isEmpty()) {
-            Toast.makeText(root, "Please enter valid password", Toast.LENGTH_SHORT).show();
+        boolean email = AppHelper.CheckEditText(txtEmail);
+        boolean password = AppHelper.CheckEditText(txtPassword);
+        boolean finalEmail = false;
+        if (email) {
+            finalEmail = AppHelper.IsValidEmailAddress(txtEmail.getText().toString());
+            if (!finalEmail) {
+                txtEmail.setError("Invalid email");
+                return false;
+            } else {
+                txtEmail.setError(null);
+                if (!password) {
+                    return false;
+                }
+            }
+
+        } else {
             return false;
         }
         return true;
+
+//
+//        if (txtEmail.getText().toString().trim().isEmpty()&& AppHelper.IsValidEmailAddress()) {
+//            Toast.makeText(root, "Please enter valid email address", Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+//
+//        if (txtPassword.getText().toString().trim().isEmpty()) {
+//            Toast.makeText(root, "Please enter valid password", Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+//        return true;
     }
 }

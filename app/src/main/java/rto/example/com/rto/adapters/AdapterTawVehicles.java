@@ -49,6 +49,18 @@ public class AdapterTawVehicles extends RecyclerView.Adapter<AdapterTawVehicles.
             holder.lblVehicleNumberPlate.setText(arrVehicle.get(position).getModifiedOn());
 
 
+        try {
+          // holder.lblDispatchedTime.setText(arrVehicle.get(position).getDispatchedTime()+"");
+           holder.lblTawTime.setText(arrVehicle.get(position).getAddedOn()+"");
+           holder.lblVehicleType.setText(arrVehicle.get(position).getVehicleType().equals("1")?"Bike":"Car");
+           holder.lblChallanAmmount.setText(arrVehicle.get(position).getAmount()+"");
+           holder.lblChallanNumber.setText(arrVehicle.get(position).getChallanNumber().toString()+"");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+       
 
         holder.btnDispatch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,9 +79,15 @@ public class AdapterTawVehicles extends RecyclerView.Adapter<AdapterTawVehicles.
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView lblVehicleName;
-        TextView lblVehicleNumberPlate;
         Button btnDispatch;
         ImageView imgDelete;
+
+        TextView lblVehicleNumberPlate;
+        TextView lblVehicleType;
+        TextView lblChallanAmmount;
+        TextView lblChallanNumber;
+        TextView lblDispatchedTime;
+        TextView lblTawTime;
 
 
         public ViewHolder(View itemView) {
@@ -77,6 +95,15 @@ public class AdapterTawVehicles extends RecyclerView.Adapter<AdapterTawVehicles.
             lblVehicleName = (TextView) itemView.findViewById(R.id.lblVehicleName);
             lblVehicleNumberPlate = (TextView) itemView.findViewById(R.id.lblVehicleNumberPlate);
             btnDispatch = (Button) itemView.findViewById(R.id.btnDispatch);
+            lblTawTime = (TextView) itemView.findViewById(R.id.lblTawTime);
+            lblDispatchedTime = (TextView) itemView.findViewById(R.id.lblDispatchedTime);
+            lblVehicleNumberPlate = (TextView) itemView.findViewById(R.id.lblVehicleNumberPlate);
+            btnDispatch = (Button) itemView.findViewById(R.id.btnDispatch);
+            lblVehicleType = (TextView) itemView.findViewById(R.id.lblVehicleType);
+            lblChallanAmmount = (TextView) itemView.findViewById(R.id.lblChallanAmmount);
+            lblChallanNumber = (TextView) itemView.findViewById(R.id.lblChallanNumber);
+
+
         }
     }
 

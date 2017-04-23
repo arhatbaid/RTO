@@ -144,7 +144,7 @@ public class FragMap extends Fragment implements
                     //gotoFragDetails(arrPoliceStation);
 
                 }else{
-                    Toast.makeText(root, "There is no any police station near to your location", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(root, "There is no any police station near to your location", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -293,7 +293,10 @@ public class FragMap extends Fragment implements
                 currLat = mLastLocation.getLatitude();
                 currLng = mLastLocation.getLongitude();
 
+                if (currLat!=0 && currLng!=0)
                 callGetNearestPoliceStations(currLat + "", currLng + "");
+                else
+                    Toast.makeText(root, "Please enable your GPS", Toast.LENGTH_SHORT).show();
             }
         }
     }

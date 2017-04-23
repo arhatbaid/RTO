@@ -1,5 +1,6 @@
 package rto.example.com.rto.fragment;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
+import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.adapters.AdapterDispatchedTawVehicles;
 import rto.example.com.rto.frameworks.dispatchtawvehicle.DispatchTawVehicleRequest;
 import rto.example.com.rto.frameworks.dispatchtawvehicle.DispatchTawVehicleResponse;
@@ -36,6 +38,8 @@ import rto.example.com.rto.webhelper.WebAPIClient;
 
 public class FragGetDispatchedTawVehicle extends Fragment {
 
+    private ActHomeOfficer root;
+
     private AdapterDispatchedTawVehicles adapterDispatchedTawVehicles = null;
     private RelativeLayout rlLoading = null;
     private ListView listDispatchedVehicle = null;
@@ -48,7 +52,7 @@ public class FragGetDispatchedTawVehicle extends Fragment {
         View view = inflater.inflate(R.layout.frag_get_dispatched_taw_vehicle, container, false);
         rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
         listDispatchedVehicle = (ListView) view.findViewById(R.id.listDispatchedVehicle);
-
+        root.setActTitle("Dispatched Taw Vehicles");
         return view;
     }
 
@@ -56,6 +60,13 @@ public class FragGetDispatchedTawVehicle extends Fragment {
     public void onStart() {
         super.onStart();
         getDispatchedVehicle();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        root = (ActHomeOfficer) activity;
+
     }
 
     private void getDispatchedVehicle() {

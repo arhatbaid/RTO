@@ -52,4 +52,8 @@
     <string name="save">SAVE</string>
     <string name="alert">Alert</string>
     <string name="no_internet">No internet connection</string>
+    <string name="gps_network_not_enabled">GPS network not enabled</string>
+    <string name="open_location_settings">Open location settings</string>
+
+
 </resources>

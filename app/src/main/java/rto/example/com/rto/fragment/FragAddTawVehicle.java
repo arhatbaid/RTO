@@ -1,5 +1,6 @@
 package rto.example.com.rto.fragment;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
+import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.frameworks.addtawvehicle.AddTawVehicleRequest;
 import rto.example.com.rto.frameworks.addtawvehicle.AddTawVehicleResponse;
 import rto.example.com.rto.frameworks.addvehicle.AddVehicleRequest;
@@ -41,6 +43,8 @@ import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
 public class FragAddTawVehicle extends Fragment implements View.OnClickListener {
+
+private ActHomeOfficer root;
 
     private EditText txtVehicleName;
     private EditText txtVehicleState;
@@ -74,17 +78,26 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
         this.isRegister = isRegister;
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.frag_add_taw_vehicle, container, false);
         findViews(view);
+        root.setActTitle("Add Taw Vehicle");
         tmpData.add("Car");
         tmpData.add("Bike");
         callVehicleState();
         callState();
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        root = (ActHomeOfficer)activity;
     }
 
     private void findViews(View view) {
@@ -343,7 +356,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                     txtVehicleCity.setError(null);
                     txtVehicleCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtVehicleCity.setText(strName);
+                    txtVehicleCity.setText(listVehicleCity.get(which).getCityCode());
                     txtVehicleCity.setError(null);
                     VEHICEL_CITY_ID = listVehicleCity.get(which).getCityId();
                     Prefs.putString(PrefsKeys.City, strName);
@@ -501,7 +514,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                     txtState.setError(null);
                     txtCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtCity.setText(strName);
+                    txtCity.setText(listVehicleCity.get(which).getCityCode());
                     txtCity.setError(null);
                     CITY_ID = listCity.get(which).getCityId();
                     Prefs.putString(PrefsKeys.City, strName);

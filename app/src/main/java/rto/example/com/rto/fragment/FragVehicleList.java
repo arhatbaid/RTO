@@ -1,5 +1,6 @@
 package rto.example.com.rto.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
+import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.adapters.AdapterVehicle;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleData;
 import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
@@ -29,6 +31,8 @@ import rto.example.com.rto.webhelper.WebAPIClient;
 
 public class FragVehicleList extends Fragment implements
         View.OnClickListener, AdapterVehicle.DeleteVehicleListener {
+
+    private ActHomeUser root;
 
     private RecyclerView recyclerVehicle;
     private Button btnAdd;
@@ -44,8 +48,22 @@ public class FragVehicleList extends Fragment implements
 
         View view = inflater.inflate(R.layout.frag_vehicle_list, container, false);
         findViews(view);
+        root.setActTitle("Vehicles");
         callGetVehicleList();
         return view;
+    }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        root = (ActHomeUser) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        root.setActTitle(getString(R.string.app_name));
     }
 
     private void findViews(View view) {

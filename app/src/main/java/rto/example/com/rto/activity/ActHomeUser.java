@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.pixplicity.easyprefs.library.Prefs;
 
 import net.simonvt.menudrawer.MenuDrawer;
+
+import org.w3c.dom.Text;
 
 import rto.example.com.rto.R;
 import rto.example.com.rto.adapters.AdapterMenu;
@@ -24,11 +27,12 @@ import rto.example.com.rto.fragment.FragVehicleList;
 
 public class ActHomeUser extends AppCompatActivity implements
         AdapterView.OnItemClickListener,
-View.OnClickListener{
+        View.OnClickListener {
 
     private MenuDrawer mDrawer;
     private ListView lstItem;
     private ImageView imgMenu = null;
+    private TextView lblTitle;
 
     private AdapterMenu adapter;
     private String[] menuItem;
@@ -45,6 +49,7 @@ View.OnClickListener{
 
         lstItem = (ListView) findViewById(R.id.lstItem);
         imgMenu = (ImageView) findViewById(R.id.imgMenu);
+        lblTitle = (TextView) findViewById(R.id.lblTitle);
         menuItem = getResources().getStringArray(R.array.menu_item);
 
         adapter = new AdapterMenu(getApplicationContext(), 0, menuItem);
@@ -101,6 +106,10 @@ View.OnClickListener{
                 showConfirmDialog();
                 break;
         }
+    }
+
+    public void setActTitle(String text) {
+        lblTitle.setText(text);
     }
 
     private void showConfirmDialog() {

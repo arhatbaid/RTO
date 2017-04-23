@@ -1,7 +1,12 @@
 package rto.example.com.rto.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -52,12 +57,15 @@ import static rto.example.com.rto.R.id.rlLoading;
 
 public class FragSearchTawVehicle extends Fragment implements View.OnClickListener {
 
+
+    private ActHomeUser root;
     private EditText txtState;
     private EditText txtCity;
     private EditText txtSeriesNumber;
     private EditText txtVehicleNumber;
     private RelativeLayout rlLoading;
     private Button btnSearch;
+    private Button btnNearestPoliceStation;
 
     private ArrayList<GetStateData> listState = new ArrayList<>();
     private ArrayList<GetCityData> listCity = new ArrayList<>();
@@ -71,6 +79,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_search_taw_vehicle, container, false);
         findViews(view);
+        root.setActTitle("Search Vehicle");
         callState();
         return view;
     }
@@ -82,11 +91,19 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         txtVehicleNumber = (EditText) view.findViewById(R.id.txtVehicleNumber);
         rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
         btnSearch = (Button) view.findViewById(R.id.btnSearch);
+        btnNearestPoliceStation = (Button) view.findViewById(R.id.btnNearestPoliceStation);
 
         txtSeriesNumber.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
         btnSearch.setOnClickListener(this);
         txtState.setOnClickListener(this);
         txtCity.setOnClickListener(this);
+        btnNearestPoliceStation.setOnClickListener(this);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        root = (ActHomeUser) activity;
     }
 
     private void callState() {
@@ -234,7 +251,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                     txtState.setError(null);
                     txtCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtCity.setText(strName);
+                    txtCity.setText(listCity.get(which).getCityCode());
                     txtCity.setError(null);
                     CITY_ID = listCity.get(which).getCityId();
                     Prefs.putString(PrefsKeys.City, strName);
@@ -252,9 +269,9 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         searchTawVehicleRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
         searchTawVehicleRequest.setVehicleCityId(CITY_ID);
         searchTawVehicleRequest.setVehicleStateId(STATE_ID);
-        searchTawVehicleRequest.setVehicleNo(txtVehicleNumber.getText().toString()+"");
+        searchTawVehicleRequest.setVehicleNo(txtVehicleNumber.getText().toString() + "");
         //searchTawVehicleRequest.setVehicleNo("MJ");
-         searchTawVehicleRequest.setVehicleSeriesNo(txtSeriesNumber.getText().toString()+"");
+        searchTawVehicleRequest.setVehicleSeriesNo(txtSeriesNumber.getText().toString() + "");
         //searchTawVehicleRequest.setVehicleSeriesNo("8877");
         WebAPIClient.getInstance(getActivity()).search_taw_vehicle(searchTawVehicleRequest, new Callback<SearchTawVehicleResponse>() {
             @Override
@@ -264,12 +281,16 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                 SearchTawVehicleResponse searchTawVehicleResponse = response.body();
                 arrPoliceStation.clear();
                 if (searchTawVehicleResponse.getFlag().equals("true")) {
+                    btnNearestPoliceStation.setVisibility(View.GONE);
 
+                } else{
+                    Toast.makeText(getActivity(), "No data found", Toast.LENGTH_LONG).show();
+                    btnNearestPoliceStation.setVisibility(View.VISIBLE);
                 }
-                else
 
-                    gotoFragDetails();
-                    //callGetNearestPoliceStations();
+                   // isLocationEnabled();
+
+                //callGetNearestPoliceStations();
             }
 
             @Override
@@ -279,44 +300,57 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         });
     }
 
-    private void callGetNearestPoliceStations() {
-        rlLoading.setVisibility(View.VISIBLE);
-        GetNearPoliceStationRequest getNearPoliceStationRequest = new GetNearPoliceStationRequest();
-        getNearPoliceStationRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getNearPoliceStationRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
-        getNearPoliceStationRequest.setLatitude("27.12345");
-        getNearPoliceStationRequest.setLongitude("-72.1556");
-        WebAPIClient.getInstance(getActivity()).search_nearest_police_station(getNearPoliceStationRequest, new Callback<GetNearPoliceStationResponse>() {
-            @Override
-            public void onResponse(Call<GetNearPoliceStationResponse> call, Response<GetNearPoliceStationResponse> response) {
-                rlLoading.setVisibility(View.GONE);
 
-                GetNearPoliceStationResponse getNearPoliceStationResponse = response.body();
-                arrPoliceStation.clear();
-                if (getNearPoliceStationResponse.getFlag().equals("true")) {
-
-                    arrPoliceStation.addAll(getNearPoliceStationResponse.getData());
-                    gotoFragDetails();
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetNearPoliceStationResponse> call, Throwable t) {
-                rlLoading.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    private void gotoFragDetails() {
+    private void gotoFragMap() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         FragMap fragMap = new FragMap();
-       // fragMap.setArrPoliceStations(getNearPoliceStationDatas);
+        // fragMap.setArrPoliceStations(getNearPoliceStationDatas);
         ft.addToBackStack(FragMap.class.getName());
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
         ft.replace(R.id.fragContainer, fragMap, FragMap.class.getName());
         ft.commit();
+    }
+
+    private void isLocationEnabled() {
+        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        if (!gps_enabled && !network_enabled) {
+            // notify user
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+            dialog.setMessage(getActivity().getResources().getString(R.string.gps_network_not_enabled));
+            dialog.setPositiveButton(getActivity().getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    getActivity().startActivity(myIntent);
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+
+
+                }
+            });
+            dialog.show();
+        } else gotoFragMap();
     }
 
     private void validateForm() {
@@ -358,6 +392,8 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
             openStateDilaog();
         } else if (v == btnSearch) {
             validateForm();
+        } else if (v == btnNearestPoliceStation) {
+            isLocationEnabled();
         }
     }
 }
