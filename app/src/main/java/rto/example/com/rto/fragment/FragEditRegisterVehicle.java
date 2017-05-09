@@ -263,6 +263,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
                         });
 
                     } catch (JsonSyntaxException exception) {
+
                         final ResultsError resultsError = new Gson().fromJson(result, ResultsError.class);
 
 
