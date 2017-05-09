@@ -1,25 +1,54 @@
 package rto.example.com.rto.fragment;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import org.openalpr.OpenALPR;
+import org.openalpr.model.Results;
+import org.openalpr.model.ResultsError;
+
+import java.io.File;
 import java.sql.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,8 +73,14 @@ import rto.example.com.rto.webhelper.WebAPIClient;
 
 public class FragAddTawVehicle extends Fragment implements View.OnClickListener {
 
-private ActHomeOfficer root;
+    private ActHomeOfficer root;
 
+    private static final int REQUEST_IMAGE = 100;
+    private static final int STORAGE=1;
+    private String ANDROID_DATA_DIR;
+    private static File destination;
+
+    private ImageView imgCamara;
     private EditText txtVehicleName;
     private EditText txtVehicleState;
     private EditText txtVehicleCity;
@@ -54,7 +89,10 @@ private ActHomeOfficer root;
     private EditText txtState;
     private EditText txtCity;
     private EditText txtAddress;
+    private TextView lblCount;
     private EditText txtVehicleType;
+    private LinearLayout lytTimer;
+    private Button btnCancel;
     private RelativeLayout rlLoading;
     private Button btnAddVehicle;
     ArrayList<String> tmpData = new ArrayList<>();
@@ -64,6 +102,8 @@ private ActHomeOfficer root;
     private ArrayList<GetCityData> listVehicleCity = new ArrayList<>();
     private ArrayList<GetStateData> listState = new ArrayList<>();
     private ArrayList<GetCityData> listCity = new ArrayList<>();
+
+    private CountDownTimer countDownTimer;
 
 
     private GetOfficerTawVehicleData getOfficerTawVehicleData;
@@ -77,7 +117,6 @@ private ActHomeOfficer root;
     public void setIsRegister(boolean isRegister) {
         this.isRegister = isRegister;
     }
-
 
 
     @Nullable
@@ -97,11 +136,13 @@ private ActHomeOfficer root;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        root = (ActHomeOfficer)activity;
+        root = (ActHomeOfficer) activity;
     }
 
     private void findViews(View view) {
+        imgCamara = (ImageView) view.findViewById(R.id.imgCamara);
         txtVehicleName = (EditText) view.findViewById(R.id.txtVehicleName);
+        lblCount = (TextView) view.findViewById(R.id.lblCount);
         txtVehicleState = (EditText) view.findViewById(R.id.txtVehicleState);
         txtVehicleCity = (EditText) view.findViewById(R.id.txtVehicleCity);
         txtSeriesNumber = (EditText) view.findViewById(R.id.txtSeriesNumber);
@@ -112,15 +153,19 @@ private ActHomeOfficer root;
         txtVehicleType = (EditText) view.findViewById(R.id.txtVehicleType);
         rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
         btnAddVehicle = (Button) view.findViewById(R.id.btnAddVehicle);
+        lytTimer = (LinearLayout) view.findViewById(R.id.lytTimer);
+        btnCancel = (Button) view.findViewById(R.id.btnCancel);
 
         txtSeriesNumber.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
 
+        imgCamara.setOnClickListener(this);
         btnAddVehicle.setOnClickListener(this);
         txtCity.setOnClickListener(this);
         txtState.setOnClickListener(this);
         txtVehicleCity.setOnClickListener(this);
         txtVehicleState.setOnClickListener(this);
         txtVehicleType.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
     }
 
 
@@ -143,8 +188,132 @@ private ActHomeOfficer root;
 
         } else if (v == txtVehicleType) {
             vehicleTypeDialog();
+
+        } else if (v == btnCancel) {
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+                lytTimer.setVisibility(View.GONE);
+            }
+        }else if (v == imgCamara) {
+            checkPermission();
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE && resultCode == Activity.RESULT_OK) {
+            final ProgressDialog progress = ProgressDialog.show(getActivity(), "Loading", "Parsing result...", true);
+            final String openAlprConfFile = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 10;
+
+            // Picasso requires permission.WRITE_EXTERNAL_STORAGE
+           // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
+            txtVehicleNumber.setText("Processing");
+
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    String result = OpenALPR.Factory.create(getActivity(), ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+
+                    Log.d("OPEN ALPR", result);
+
+                    try {
+                        final Results results = new Gson().fromJson(result, Results.class);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (results == null || results.getResults() == null || results.getResults().size() == 0) {
+                                    Toast.makeText(getActivity(), "It was not possible to detect the licence plate.Please type manually", Toast.LENGTH_LONG).show();
+                                    txtVehicleNumber.setText("");
+                                } else {
+                                    txtVehicleNumber.setText("Plate: " + results.getResults().get(0).getPlate()
+                                            // Trim confidence to two decimal places
+                                            + " Confidence: " + String.format("%.2f", results.getResults().get(0).getConfidence()) + "%"
+                                            // Convert processing time to seconds and trim to two decimal places
+                                            + " Processing time: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds");
+                                }
+                            }
+                        });
+
+                    } catch (JsonSyntaxException exception) {
+                        final ResultsError resultsError = new Gson().fromJson(result, ResultsError.class);
+
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                txtVehicleNumber.setText(resultsError.getMsg());
+                            }
+                        });
+                    }
+
+                    progress.dismiss();
+                }
+            });
+        }
+    }
+
+    private void checkPermission() {
+        List<String> permissions = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!permissions.isEmpty()) {
+            Toast.makeText(getActivity(), "Storage access needed to manage the picture.", Toast.LENGTH_LONG).show();
+            String[] params = permissions.toArray(new String[permissions.size()]);
+            ActivityCompat.requestPermissions(getActivity(), params, STORAGE);
+        } else { // We already have permissions, so handle as normal
+            takePicture();
+        }
+    }
+    public String dateToString(Date date, String format) {
+        SimpleDateFormat df = new SimpleDateFormat(format, Locale.getDefault());
+
+        return df.format(date);
+    }
+    public void takePicture() {
+        // Use a folder to store all results
+        File folder = new File(Environment.getExternalStorageDirectory() + "/OpenALPR/");
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        // Generate the path for the next photo
+        String name = dateToString(new Date(), "yyyy-MM-dd-hh-mm-ss");
+        destination = new File(folder, name + ".jpg");
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destination));
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case STORAGE:{
+                Map<String, Integer> perms = new HashMap<>();
+                // Initial
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for WRITE_EXTERNAL_STORAGE
+                Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                if (storage) {
+                    // permission was granted, yay!
+                    takePicture();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(getActivity(), "Storage permission is needed to analyse the picture.", Toast.LENGTH_LONG).show();
+                }
+            }
+            default:
+                break;
+        }
+    }
+
 
     private void validateform() {
         boolean vehicleStateId = AppHelper.CheckEditText(txtVehicleState);
@@ -157,12 +326,12 @@ private ActHomeOfficer root;
         boolean type = AppHelper.CheckEditText(txtVehicleType);
 
         if (vehicleStateId && vehicleCityId && seriesNo && vehicleNumber && stateId && cityId && tawAddress && type) {
-            callAddTawVehicle();
+            callAddTawVehicle("1");
         }
 
     }
 
-    private void callAddTawVehicle() {
+    private void callAddTawVehicle(String checkSecondTime) {
         rlLoading.setVisibility(View.VISIBLE);
 
         AddTawVehicleRequest addTawVehicleRequest = new AddTawVehicleRequest();
@@ -175,7 +344,7 @@ private ActHomeOfficer root;
         addTawVehicleRequest.setVehicleSeriesNo(txtSeriesNumber.getText().toString());
         addTawVehicleRequest.setVehicleType(txtVehicleType.getText().toString().equals("Car") ? "2" : "1");
         addTawVehicleRequest.setVehicleNo(txtVehicleNumber.getText().toString());
-        addTawVehicleRequest.setCheckSecondTime("1");
+        addTawVehicleRequest.setCheckSecondTime(checkSecondTime);
         addTawVehicleRequest.setTawAddress(txtAddress.getText().toString());
 
 
@@ -187,7 +356,7 @@ private ActHomeOfficer root;
                 AddTawVehicleResponse addTawVehicleResponse = response.body();
                 if (addTawVehicleResponse.getFlag().equals("true")) {
                     Toast.makeText(getActivity(), "Vehicle registered successfully!", Toast.LENGTH_SHORT).show();
-
+                    //   startTimer();
                     txtVehicleState.setText("");
                     txtVehicleCity.setText("");
                     txtSeriesNumber.setText("");
@@ -200,7 +369,8 @@ private ActHomeOfficer root;
                     txtVehicleName.setText("");
                     //getActivity().getSupportFragmentManager().popBackStack();
                 } else if (addTawVehicleResponse.getFlag().equals("false")) {
-                    Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
+                    startTimer();
                 }
             }
 
@@ -217,8 +387,6 @@ private ActHomeOfficer root;
     private void callVehicleState() {
         rlLoading.setVisibility(View.VISIBLE);
         GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getStateRequest.setUserType(Constants.TYPE_OFFICER);
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
             public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
@@ -227,7 +395,7 @@ private ActHomeOfficer root;
                 if (getStateResponse.getFlag().equals("true")) {
                     listVehicleState.clear();
                     listVehicleState.addAll(getStateResponse.getData());
-                    if (!Prefs.getString(PrefsKeys.State, "").isEmpty())
+                    if (!Prefs.getString(PrefsKeys.VehicleState, "").isEmpty())
                         getVehicleStateId();
                 } else if (getStateResponse.getFlag().equals("false")) {
                 }
@@ -244,8 +412,6 @@ private ActHomeOfficer root;
     private void callVehicleCity() {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getCityRequest.setUserType(Constants.TYPE_OFFICER);
         getCityRequest.setStateId(VEHICLE_STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override
@@ -278,7 +444,7 @@ private ActHomeOfficer root;
         //If no state is selected
         if (listVehicleState.size() > 0) {
             for (int i = 0, count = listVehicleState.size(); i < count; i++) {
-                if (Prefs.getString(PrefsKeys.State, "").equalsIgnoreCase(listVehicleState.get(i).getStateName())) {
+                if (Prefs.getString(PrefsKeys.VehicleState, "").equalsIgnoreCase(listVehicleState.get(i).getStateName())) {
                     VEHICLE_STATE_ID = listVehicleState.get(i).getStateId();
                     callVehicleCity();
                     break;
@@ -291,14 +457,14 @@ private ActHomeOfficer root;
         int selectedOption = -1;
         ArrayList<String> tmpData = new ArrayList<>();
         if (listVehicleState.size() > 0) {
-            if (Prefs.getString(PrefsKeys.State, "").isEmpty()) {
+            if (Prefs.getString(PrefsKeys.VehicleState, "").isEmpty()) {
                 for (int i = 0, count = listVehicleState.size(); i < count; i++) {
                     tmpData.add(listVehicleState.get(i).getStateName());
                 }
             } else {
                 for (int i = 0, count = listVehicleState.size(); i < count; i++) {
                     tmpData.add(listVehicleState.get(i).getStateName());
-                    if (listVehicleState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.State, ""))) {
+                    if (listVehicleState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.VehicleState, ""))) {
                         selectedOption = i;
                     }
                 }
@@ -311,14 +477,14 @@ private ActHomeOfficer root;
         int selectedOption = -1;
         ArrayList<String> tmpData = new ArrayList<>();
         if (listVehicleCity.size() > 0) {
-            if (Prefs.getString(PrefsKeys.City, "").isEmpty()) {
+            if (Prefs.getString(PrefsKeys.VehicleCity, "").isEmpty()) {
                 for (int i = 0, count = listVehicleCity.size(); i < count; i++) {
                     tmpData.add(listVehicleCity.get(i).getCityName());
                 }
             } else {
                 for (int i = 0, count = listVehicleCity.size(); i < count; i++) {
                     tmpData.add(listVehicleCity.get(i).getCityName());
-                    if (listVehicleCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.City, ""))) {
+                    if (listVehicleCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.VehicleCity, ""))) {
                         selectedOption = i;
                     }
                 }
@@ -349,17 +515,17 @@ private ActHomeOfficer root;
                 if (type.equalsIgnoreCase(Constants.STATE)) {
                     VEHICLE_STATE_ID = listVehicleState.get(which).getStateId();
                     txtVehicleState.setText(strName);
-                    Prefs.putString(PrefsKeys.State, strName);
-                    Prefs.putString(PrefsKeys.City, "");
+                    Prefs.putString(PrefsKeys.VehicleState, strName);
+                    Prefs.putString(PrefsKeys.VehicleCity, "");
                     txtVehicleCity.setText("");
-                    callCity();
+                    callVehicleCity();
                     txtVehicleCity.setError(null);
                     txtVehicleCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
                     txtVehicleCity.setText(listVehicleCity.get(which).getCityCode());
                     txtVehicleCity.setError(null);
                     VEHICEL_CITY_ID = listVehicleCity.get(which).getCityId();
-                    Prefs.putString(PrefsKeys.City, strName);
+                    Prefs.putString(PrefsKeys.VehicleCity, strName);
                 }
                 dialog.dismiss();
             }
@@ -372,8 +538,6 @@ private ActHomeOfficer root;
     private void callState() {
         rlLoading.setVisibility(View.VISIBLE);
         GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getStateRequest.setUserType(Constants.TYPE_OFFICER);
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
             public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
@@ -401,8 +565,6 @@ private ActHomeOfficer root;
     private void callCity() {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getCityRequest.setUserType(Constants.TYPE_OFFICER);
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override
@@ -525,7 +687,6 @@ private ActHomeOfficer root;
         builderSingle.show();
     }
 
-
     private void vehicleTypeDialog() {
         int selectedOption = -1;
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
@@ -555,6 +716,24 @@ private ActHomeOfficer root;
             }
         });
         builderSingle.show();
+    }
+
+    public void startTimer() {
+        countDownTimer = new CountDownTimer(60 * 1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                lytTimer.setVisibility(View.VISIBLE);
+                lblCount.setText("" + millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                lytTimer.setVisibility(View.GONE);
+                callAddTawVehicle("0");
+                // lblCount.setText("done!");
+            }
+
+        }.start();
+
     }
 
 

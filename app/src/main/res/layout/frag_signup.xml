@@ -53,7 +53,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/first_name"
-                    android:inputType="text|textNoSuggestions" />
+
+                    android:inputType="textCapSentences" />
 
                 <EditText
                     android:id="@+id/txtLastName"
@@ -67,13 +68,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/address"
-                    android:inputType="text|textNoSuggestions" />
+                    android:inputType="textCapSentences" />
 
                 <EditText
                     android:id="@+id/txtPhoneNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/mobile"
+                    android:maxLength="10"
                     android:inputType="number" />
 
                 <EditText

@@ -27,7 +27,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/app_name"
                     android:textSize="@dimen/big_text" />
 
                 <Button
@@ -41,7 +40,6 @@
                 android:id="@+id/lblVehicleNumberPlate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
                 android:visibility="gone"
                 android:textSize="@dimen/common_padding" />
 
@@ -65,7 +63,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/large_space"
-                    android:text="@string/app_name"
                     android:textSize="@dimen/common_padding" />
 
             </LinearLayout>
@@ -89,7 +86,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/large_space"
-                    android:text="@string/app_name"
                     android:textSize="@dimen/common_padding" />
 
             </LinearLayout>
@@ -113,7 +109,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/large_space"
-                    android:text="@string/app_name"
                     android:textSize="@dimen/common_padding" />
 
             </LinearLayout>
@@ -137,7 +132,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/large_space"
-                    android:text="@string/app_name"
                     android:textSize="@dimen/common_padding" />
             </LinearLayout>
 

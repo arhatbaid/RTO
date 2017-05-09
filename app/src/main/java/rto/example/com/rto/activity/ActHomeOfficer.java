@@ -86,6 +86,7 @@ public class ActHomeOfficer extends AppCompatActivity implements
                 FragGetDispatchedTawVehicle fragEditRegisterVehicle1 = new FragGetDispatchedTawVehicle();
                 ft.addToBackStack(FragGetDispatchedTawVehicle.class.getName());
                 FragSearchTawVehicle fragSearchTawVehicle1 = new FragSearchTawVehicle();
+                fragSearchTawVehicle1.setFromOfficer(true);
                 ft.addToBackStack(FragSearchTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);

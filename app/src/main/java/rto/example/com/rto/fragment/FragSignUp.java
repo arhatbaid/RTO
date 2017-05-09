@@ -115,8 +115,6 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     private void callCity() {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getCityRequest.setUserType(Constants.TYPE_USER);
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override
@@ -163,13 +161,15 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         }
 
         String email = txtEmail.getText().toString();
-        boolean finalEmail = false;
+        boolean finalEmail = true;
         if (email.equals("")) {
             txtEmail.setError("*");
+            finalEmail = false;
             return;
         } else {
             if (!AppHelper.IsValidEmailAddress(email)) {
                 txtEmail.setError("Invalid email");
+                finalEmail=false;
                 return;
             }
 
@@ -237,6 +237,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
                 if (signupRespose.getFlag().equals("true")) {
                     rlLoading.setVisibility(View.GONE);
 
+                   Prefs.putString(PrefsKeys.USERID,signupRespose.getData().getUser_id());
                     startActivity(new Intent(getActivity(), ActHomeUser.class));
                     getActivity().finish();
 
@@ -289,8 +290,8 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     private void callState() {
         rlLoading.setVisibility(View.VISIBLE);
         GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId("8");
-        getStateRequest.setUserType(Constants.TYPE_OFFICER);
+//        getStateRequest.setUserId("8");
+//        getStateRequest.setUserType(Constants.TYPE_OFFICER);
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
             public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
@@ -320,7 +321,7 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
         if (listState.size() > 0) {
             for (int i = 0, count = listState.size(); i < count; i++) {
                 if (STATE_ID.equalsIgnoreCase(listState.get(i).getStateId())) {
-                    txtState.setText(listState.get(i).getStateCode());
+                    txtState.setText(listState.get(i).getStateName());
                     break;
                 }
             }
@@ -359,13 +360,13 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
                 if (type.equalsIgnoreCase(Constants.STATE)) {
                     STATE_ID = listState.get(which).getStateId();
 
-                    txtState.setText(listState.get(which).getStateCode());
+                    txtState.setText(listState.get(which).getStateName());
                     txtCity.setText("");
                     callCity(false);
                     txtState.setError(null);
                     txtCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtCity.setText(listCity.get(which).getCityCode());
+                    txtCity.setText(listCity.get(which).getCityName());
                     txtCity.setError(null);
                     CITY_ID = listCity.get(which).getCityId();
                 }
@@ -378,8 +379,6 @@ public class FragSignUp extends Fragment implements View.OnClickListener {
     private void callCity(final boolean predefined) {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId("8");
-        getCityRequest.setUserType(Constants.TYPE_OFFICER);
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override

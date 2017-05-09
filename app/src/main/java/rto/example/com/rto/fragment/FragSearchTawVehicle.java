@@ -29,6 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rto.example.com.rto.R;
+import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.activity.ActHomeUser;
 import rto.example.com.rto.adapters.AdapterVehicle;
 import rto.example.com.rto.frameworks.city.GetCityData;
@@ -58,7 +59,8 @@ import static rto.example.com.rto.R.id.rlLoading;
 public class FragSearchTawVehicle extends Fragment implements View.OnClickListener {
 
 
-    private ActHomeUser root;
+    private ActHomeUser rootHome;
+    private ActHomeOfficer rootOfficer;
     private EditText txtState;
     private EditText txtCity;
     private EditText txtSeriesNumber;
@@ -74,12 +76,21 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     private String STATE_ID = "";
     private String CITY_ID = "";
 
+    private boolean isFromOfficer;
+
+    public void setFromOfficer(boolean fromOfficer) {
+        isFromOfficer = fromOfficer;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_search_taw_vehicle, container, false);
         findViews(view);
-        root.setActTitle("Search Vehicle");
+        if (isFromOfficer)
+            rootOfficer.setActTitle("Search Vehicle");
+        else
+            rootHome.setActTitle("Search Vehicle");
         callState();
         return view;
     }
@@ -103,14 +114,15 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        root = (ActHomeUser) activity;
+        if (isFromOfficer)
+            rootOfficer = (ActHomeOfficer) activity;
+        else
+            rootHome = (ActHomeUser) activity;
     }
 
     private void callState() {
         rlLoading.setVisibility(View.VISIBLE);
         GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getStateRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
             public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
@@ -138,8 +150,6 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     private void callCity() {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getCityRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override
@@ -283,12 +293,12 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                 if (searchTawVehicleResponse.getFlag().equals("true")) {
                     btnNearestPoliceStation.setVisibility(View.GONE);
 
-                } else{
+                } else {
                     Toast.makeText(getActivity(), "No data found", Toast.LENGTH_LONG).show();
                     btnNearestPoliceStation.setVisibility(View.VISIBLE);
                 }
 
-                   // isLocationEnabled();
+                // isLocationEnabled();
 
                 //callGetNearestPoliceStations();
             }

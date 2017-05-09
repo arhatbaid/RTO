@@ -190,7 +190,7 @@ public class WebAPIClient {
     public void get_state(GetStateRequest Request, Callback<GetStateResponse> callback) {
         String api_request = "get_state";
         String data = new Gson().toJson(Request);
-        json().get_state(api_id, api_secret, api_request, data).enqueue(callback);
+        json().get_state(api_id, api_secret, api_request).enqueue(callback);
     }
 
     public void get_city(GetCityRequest Request, Callback<GetCityResponse> callback) {

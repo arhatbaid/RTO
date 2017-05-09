@@ -45,8 +45,7 @@ public interface WebAPIInterface {
     @POST(Endpoint.POST_URL)
     Call<GetStateResponse> get_state(@Field("api_id") String api_id,
                                      @Field("api_secret") String api_secret,
-                                     @Field("api_request") String api_request,
-                                     @Field("data") String data);
+                                     @Field("api_request") String api_request);
 
     @FormUrlEncoded
     @POST(Endpoint.POST_URL)

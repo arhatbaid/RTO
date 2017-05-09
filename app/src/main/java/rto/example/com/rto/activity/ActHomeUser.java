@@ -83,6 +83,7 @@ public class ActHomeUser extends AppCompatActivity implements
                 FragEditRegisterVehicle fragEditRegisterVehicle1 = new FragEditRegisterVehicle();
                 ft.addToBackStack(FragEditRegisterVehicle.class.getName());
                 FragSearchTawVehicle fragSearchTawVehicle1 = new FragSearchTawVehicle();
+                fragSearchTawVehicle1.setFromOfficer(false);
                 ft.addToBackStack(FragSearchTawVehicle.class.getName());
                 ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                         R.anim.slide_in_right, R.anim.slide_out_right);

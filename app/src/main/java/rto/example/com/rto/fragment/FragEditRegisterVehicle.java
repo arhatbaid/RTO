@@ -1,16 +1,28 @@
 package rto.example.com.rto.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +31,27 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import org.openalpr.OpenALPR;
+import org.openalpr.model.Results;
+import org.openalpr.model.ResultsError;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,9 +74,17 @@ import rto.example.com.rto.helper.Constants;
 import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
 
+import static android.Manifest.permission_group.STORAGE;
+
 public class FragEditRegisterVehicle extends Fragment implements View.OnClickListener {
 
     private ActHomeUser root;
+
+
+    private static final int REQUEST_IMAGE = 100;
+    private static final int STORAGE=1;
+    private String ANDROID_DATA_DIR;
+    private static File destination;
 
     private EditText txtVehicleName;
     private EditText txtState;
@@ -64,6 +98,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
     private EditText txtPUCPurchaseDate;
     private Button btnAddVehicle;
     private RelativeLayout rlLoading;
+    private ImageView imgCamera;
 
     ArrayList<String> tmpData = new ArrayList<>();
     private GetVehicleData getVehicleData = null;
@@ -123,6 +158,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
         txtVehicleBuyDate = (EditText) view.findViewById(R.id.txtVehicleBuyDate);
         txtPUCNumber = (EditText) view.findViewById(R.id.txtPUCNumber);
         txtPUCPurchaseDate = (EditText) view.findViewById(R.id.txtPUCPurchaseDate);
+        imgCamera = (ImageView) view.findViewById(R.id.imgCamera);
 
         txtSeriesNumber.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
 
@@ -130,11 +166,19 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
         rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
 
         btnAddVehicle.setOnClickListener(this);
+        imgCamera.setOnClickListener(this);
         txtState.setOnClickListener(this);
         txtCity.setOnClickListener(this);
         txtVehicleType.setOnClickListener(this);
         txtVehicleBuyDate.setOnClickListener(this);
         txtPUCPurchaseDate.setOnClickListener(this);
+
+
+        Date cDate = new Date();
+        String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+
+        txtVehicleBuyDate.setText(fDate);
+
 
         tmpData.add("Car");
         tmpData.add("Bike");
@@ -153,6 +197,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
         String buy_date = getVehicleData.getBuyingDate();
         STATE_ID = getVehicleData.getStateId();
         CITY_ID = getVehicleData.getCityId();
+
 
         if (AppHelper.isValidString(name))
             txtVehicleName.setText(name);
@@ -179,12 +224,130 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             txtVehicleType.setText(type.equals("1") ? "Bike" : "Car");
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE && resultCode == Activity.RESULT_OK) {
+            final ProgressDialog progress = ProgressDialog.show(getActivity(), "Loading", "Parsing result...", true);
+            final String openAlprConfFile = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 10;
+
+            // Picasso requires permission.WRITE_EXTERNAL_STORAGE
+            // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
+            txtVehicleNumber.setText("Processing");
+
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    String result = OpenALPR.Factory.create(getActivity(), ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+
+                    Log.d("OPEN ALPR", result);
+
+                    try {
+                        final Results results = new Gson().fromJson(result, Results.class);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (results == null || results.getResults() == null || results.getResults().size() == 0) {
+                                    Toast.makeText(getActivity(), "It was not possible to detect the licence plate.Please type manually.", Toast.LENGTH_LONG).show();
+                                    txtVehicleNumber.setText("");
+                                } else {
+                                    txtVehicleNumber.setText("Plate: " + results.getResults().get(0).getPlate()
+                                            // Trim confidence to two decimal places
+                                            + " Confidence: " + String.format("%.2f", results.getResults().get(0).getConfidence()) + "%"
+                                            // Convert processing time to seconds and trim to two decimal places
+                                            + " Processing time: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds");
+                                }
+                            }
+                        });
+
+                    } catch (JsonSyntaxException exception) {
+                        final ResultsError resultsError = new Gson().fromJson(result, ResultsError.class);
+
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                txtVehicleNumber.setText(resultsError.getMsg());
+                            }
+                        });
+                    }
+
+                    progress.dismiss();
+                }
+            });
+        }
+    }
+
+    private void checkPermission() {
+        List<String> permissions = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!permissions.isEmpty()) {
+            Toast.makeText(getActivity(), "Storage access needed to manage the picture.", Toast.LENGTH_LONG).show();
+            String[] params = permissions.toArray(new String[permissions.size()]);
+            ActivityCompat.requestPermissions(getActivity(), params, STORAGE);
+        } else { // We already have permissions, so handle as normal
+            takePicture();
+        }
+    }
+    public String dateToString(Date date, String format) {
+        SimpleDateFormat df = new SimpleDateFormat(format, Locale.getDefault());
+
+        return df.format(date);
+    }
+    public void takePicture() {
+        // Use a folder to store all results
+        File folder = new File(Environment.getExternalStorageDirectory() + "/OpenALPR/");
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        // Generate the path for the next photo
+        String name = dateToString(new Date(), "yyyy-MM-dd-hh-mm-ss");
+        destination = new File(folder, name + ".jpg");
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destination));
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case STORAGE:{
+                Map<String, Integer> perms = new HashMap<>();
+                // Initial
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for WRITE_EXTERNAL_STORAGE
+                Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                if (storage) {
+                    // permission was granted, yay!
+                    takePicture();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(getActivity(), "Storage permission is needed to analyse the picture.", Toast.LENGTH_LONG).show();
+                }
+            }
+            default:
+                break;
+        }
+    }
+
+
+
     private void callAddVehicle() {
         rlLoading.setVisibility(View.VISIBLE);
 
         AddVehicleRequest addVehicleRequest = new AddVehicleRequest();
         addVehicleRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        addVehicleRequest.setUserType("3");
+        addVehicleRequest.setUserType(Constants.TYPE_USER);
         addVehicleRequest.setVehicleName(txtVehicleName.getText().toString());
         addVehicleRequest.setStateId(STATE_ID);
         addVehicleRequest.setCityId(CITY_ID);
@@ -221,7 +384,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
         EditVehicleRequest editVehicleRequest = new EditVehicleRequest();
         editVehicleRequest.setVehicleId(getVehicleData.getVehicleId());
         editVehicleRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        editVehicleRequest.setUserType("3");
+        editVehicleRequest.setUserType(Constants.TYPE_USER);
         editVehicleRequest.setVehicleName(txtVehicleName.getText().toString());
         editVehicleRequest.setStateId(STATE_ID);
         editVehicleRequest.setCityId(CITY_ID);
@@ -275,6 +438,8 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             showDatePickerDialog(true);
         } else if (v == txtPUCPurchaseDate) {
             showDatePickerDialog(false);
+        } else if (v == imgCamera) {
+            checkPermission();
         }
     }
 
@@ -372,8 +537,6 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
     private void callState() {
         rlLoading.setVisibility(View.VISIBLE);
         GetStateRequest getStateRequest = new GetStateRequest();
-        getStateRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getStateRequest.setUserType("3");
         WebAPIClient.getInstance(getActivity()).get_state(getStateRequest, new Callback<GetStateResponse>() {
             @Override
             public void onResponse(Call<GetStateResponse> call, Response<GetStateResponse> response) {
@@ -461,8 +624,6 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
     private void callCity(final boolean predefined) {
         rlLoading.setVisibility(View.VISIBLE);
         GetCityRequest getCityRequest = new GetCityRequest();
-        getCityRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getCityRequest.setUserType("3");
         getCityRequest.setStateId(STATE_ID);
         WebAPIClient.getInstance(getActivity()).get_city(getCityRequest, new Callback<GetCityResponse>() {
             @Override

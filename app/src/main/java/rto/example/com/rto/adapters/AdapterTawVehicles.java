@@ -50,17 +50,19 @@ public class AdapterTawVehicles extends RecyclerView.Adapter<AdapterTawVehicles.
 
 
         try {
-          // holder.lblDispatchedTime.setText(arrVehicle.get(position).getDispatchedTime()+"");
-           holder.lblTawTime.setText(arrVehicle.get(position).getAddedOn()+"");
-           holder.lblVehicleType.setText(arrVehicle.get(position).getVehicleType().equals("1")?"Bike":"Car");
-           holder.lblChallanAmmount.setText(arrVehicle.get(position).getAmount()+"");
-           holder.lblChallanNumber.setText(arrVehicle.get(position).getChallanNumber().toString()+"");
+            // holder.lblDispatchedTime.setText(arrVehicle.get(position).getDispatchedTime()+"");
+            holder.lblTawTime.setText(arrVehicle.get(position).getAddedOn() + "");
+            holder.lblVehicleType.setText(arrVehicle.get(position).getVehicleType().equals("1") ? "Bike" : "Car");
+            holder.lblChallanAmmount.setText(arrVehicle.get(position).getAmount() + "");
+            if (AppHelper.isValidString(arrVehicle.get(position).getChallanNumber() + ""))
+                holder.lblChallanNumber.setText(arrVehicle.get(position).getChallanNumber().toString() + "");
+            else
+                holder.lblChallanNumber.setText("");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-       
 
         holder.btnDispatch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,10 +110,7 @@ public class AdapterTawVehicles extends RecyclerView.Adapter<AdapterTawVehicles.
     }
 
 
-
-
-
-    public interface  OnDispatchPressed{
+    public interface OnDispatchPressed {
         public void onDispatchClick(int pos);
     }
 }

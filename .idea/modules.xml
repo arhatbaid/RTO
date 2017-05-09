@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RTO.iml" filepath="$PROJECT_DIR$/RTO.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openalpr/openalpr.iml" filepath="$PROJECT_DIR$/openalpr/openalpr.iml" />
     </modules>
   </component>
 </project>

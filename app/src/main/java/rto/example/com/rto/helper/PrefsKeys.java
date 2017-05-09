@@ -16,6 +16,8 @@ public class PrefsKeys {
     public static String GENDER = "GENDER";
     public static String City = "City";
     public static String State = "State";
+    public static String VehicleState = "VehicleState";
+    public static String VehicleCity = "VehicleCity";
     public static String Status = "Status";
     public static String LOGIN = "LOGIN";
     public static String Money = "Money";

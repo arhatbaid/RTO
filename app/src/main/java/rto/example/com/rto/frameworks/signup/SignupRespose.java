@@ -14,7 +14,8 @@ public class SignupRespose {
     private String result;
     @SerializedName("data")
     @Expose
-    private SignupData data; @SerializedName("msg")
+    private SignupData data;
+    @SerializedName("msg")
     @Expose
     private String msg;
 
