@@ -6,7 +6,6 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 import rto.example.com.rto.frameworks.addtawvehicle.AddTawVehicleResponse;
-import rto.example.com.rto.frameworks.addvehicle.AddVehicleRequest;
 import rto.example.com.rto.frameworks.addvehicle.AddVehicleResponse;
 import rto.example.com.rto.frameworks.city.GetCityResponse;
 import rto.example.com.rto.frameworks.deletevehicle.DeleteVehicleResponse;

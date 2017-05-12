@@ -44,7 +44,6 @@ import rto.example.com.rto.frameworks.signin.SigninRequest;
 import rto.example.com.rto.frameworks.signin.SigninResponse;
 import rto.example.com.rto.frameworks.signup.SignupRequest;
 import rto.example.com.rto.frameworks.signup.SignupRespose;
-import rto.example.com.rto.frameworks.state.GetStateData;
 import rto.example.com.rto.frameworks.state.GetStateRequest;
 import rto.example.com.rto.frameworks.state.GetStateResponse;
 

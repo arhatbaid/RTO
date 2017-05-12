@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -89,9 +90,14 @@ public class FragMap extends Fragment implements
     private ArrayList<GetNearPoliceStationData> arrPoliceStations = new ArrayList<>();
 
     private SupportMapFragment map;
-    private RelativeLayout rlLoading;
 
     private String eventName, eventMsg;
+
+    private GetNearPoliceStationData getNearPoliceStationData;
+
+    public void setGetNearPoliceStationData(GetNearPoliceStationData getNearPoliceStationData) {
+        this.getNearPoliceStationData = getNearPoliceStationData;
+    }
 
     @Nullable
     @Override
@@ -99,6 +105,8 @@ public class FragMap extends Fragment implements
 
         View view = inflater.inflate(R.layout.frag_map, container, false);
         findViews(view);
+        MapsInitializer.initialize(getActivity());
+
         return view;
     }
 
@@ -109,58 +117,25 @@ public class FragMap extends Fragment implements
     }
 
     private void findViews(View view) {
-        rlLoading = (RelativeLayout) view.findViewById(R.id.rlLoading);
     }
 
     private void retriveEvents() {
-        for (int i = 0; i < arrPoliceStations.size(); i++) {
-
-            double lat = Double.parseDouble(arrPoliceStations.get(i).getLatitude());
-            double lng = Double.parseDouble(arrPoliceStations.get(i).getLatitude());
-            drawMarker(new LatLng(lat, lng), eventMsg, eventName);
-        }
+//        for (int i = 0; i < arrPoliceStations.size(); i++) {
+//
+//            double lat = Double.parseDouble(arrPoliceStations.get(i).getLatitude());
+//            double lng = Double.parseDouble(arrPoliceStations.get(i).getLatitude());
+//            drawMarker(new LatLng(lat, lng), eventMsg, eventName);
+//        }
+        drawMarker(new LatLng(Double.parseDouble(getNearPoliceStationData.getLatitude()), Double.parseDouble(getNearPoliceStationData.getLongitude())));
     }
 
-    private void callGetNearestPoliceStations(String lat, String lng) {
-        rlLoading.setVisibility(View.VISIBLE);
-        GetNearPoliceStationRequest getNearPoliceStationRequest = new GetNearPoliceStationRequest();
-        getNearPoliceStationRequest.setUserId(Prefs.getString(PrefsKeys.USERID, ""));
-        getNearPoliceStationRequest.setUserType(Prefs.getString(PrefsKeys.USER_TYPE, ""));
-        getNearPoliceStationRequest.setLatitude(lat);
-        getNearPoliceStationRequest.setLongitude(lng);
-        WebAPIClient.getInstance(getActivity()).search_nearest_police_station(getNearPoliceStationRequest, new Callback<GetNearPoliceStationResponse>() {
-            @Override
-            public void onResponse(Call<GetNearPoliceStationResponse> call, Response<GetNearPoliceStationResponse> response) {
-                rlLoading.setVisibility(View.GONE);
 
-                GetNearPoliceStationResponse getNearPoliceStationResponse = response.body();
-                arrPoliceStations.clear();
-                String flag = getNearPoliceStationResponse.getFlag();
-                Log.e("flag",flag);
-                if (getNearPoliceStationResponse.getFlag().equals("true")) {
-
-                    arrPoliceStations.addAll(getNearPoliceStationResponse.getData());
-                    retriveEvents();
-                    //gotoFragDetails(arrPoliceStation);
-
-                }else{
-                    Toast.makeText(root, "There is no any police station near to your location", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetNearPoliceStationResponse> call, Throwable t) {
-                rlLoading.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    private void drawMarker(LatLng point, String msg, String eventName) {
+    private void drawMarker(LatLng point) {
 
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(point)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
-                .title(msg).snippet(eventName));
+                .title(getNearPoliceStationData.getName()+"").snippet(getNearPoliceStationData.getAddress()+""));
 
         marker.showInfoWindow();
 
@@ -293,10 +268,11 @@ public class FragMap extends Fragment implements
                 currLat = mLastLocation.getLatitude();
                 currLng = mLastLocation.getLongitude();
 
-                if (currLat!=0 && currLng!=0)
-                callGetNearestPoliceStations(currLat + "", currLng + "");
-                else
-                    Toast.makeText(root, "Please enable your GPS", Toast.LENGTH_SHORT).show();
+                retriveEvents();
+                if (currLat!=0 && currLng!=0){}
+                //callGetNearestPoliceStations(currLat + "", currLng + "");
+//                else
+//                    Toast.makeText(root, "Please enable your GPS", Toast.LENGTH_SHORT).show();
             }
         }
     }

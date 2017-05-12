@@ -15,10 +15,13 @@ import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pixplicity.easyprefs.library.Prefs;
@@ -31,16 +34,11 @@ import retrofit2.Response;
 import rto.example.com.rto.R;
 import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.activity.ActHomeUser;
-import rto.example.com.rto.adapters.AdapterVehicle;
 import rto.example.com.rto.frameworks.city.GetCityData;
 import rto.example.com.rto.frameworks.city.GetCityRequest;
 import rto.example.com.rto.frameworks.city.GetCityResponse;
 import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationData;
-import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationRequest;
-import rto.example.com.rto.frameworks.getnearestpolicestations.GetNearPoliceStationResponse;
-import rto.example.com.rto.frameworks.getvehicle.GetVehicleData;
-import rto.example.com.rto.frameworks.getvehicle.GetVehicleRequest;
-import rto.example.com.rto.frameworks.getvehicle.GetVehicleResponse;
+import rto.example.com.rto.frameworks.searchtawvehicle.SearchTawVehicleData;
 import rto.example.com.rto.frameworks.searchtawvehicle.SearchTawVehicleRequest;
 import rto.example.com.rto.frameworks.searchtawvehicle.SearchTawVehicleResponse;
 import rto.example.com.rto.frameworks.state.GetStateData;
@@ -49,8 +47,6 @@ import rto.example.com.rto.frameworks.state.GetStateResponse;
 import rto.example.com.rto.helper.Constants;
 import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
-
-import static rto.example.com.rto.R.id.rlLoading;
 
 /**
  * Created by ridz1 on 14/04/2017.
@@ -68,6 +64,12 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     private RelativeLayout rlLoading;
     private Button btnSearch;
     private Button btnNearestPoliceStation;
+
+    private LinearLayout lytFound;
+    private TextView lblVehicleNumber;
+    private TextView lblSeriesNumber;
+    private TextView lblAddress;
+    private TextView lblTime;
 
     private ArrayList<GetStateData> listState = new ArrayList<>();
     private ArrayList<GetCityData> listCity = new ArrayList<>();
@@ -104,11 +106,19 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         btnSearch = (Button) view.findViewById(R.id.btnSearch);
         btnNearestPoliceStation = (Button) view.findViewById(R.id.btnNearestPoliceStation);
 
+        lytFound = (LinearLayout) view.findViewById(R.id.lytFound);
+        lblVehicleNumber = (TextView) view.findViewById(R.id.lblVehicleNumber);
+        lblSeriesNumber = (TextView) view.findViewById(R.id.lblSeriesNumber);
+        lblAddress = (TextView) view.findViewById(R.id.lblAddress);
+        lblTime = (TextView) view.findViewById(R.id.lblTime);
+
         txtSeriesNumber.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
         btnSearch.setOnClickListener(this);
         txtState.setOnClickListener(this);
         txtCity.setOnClickListener(this);
         btnNearestPoliceStation.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -142,7 +152,8 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
             @Override
             public void onFailure(Call<GetStateResponse> call, Throwable t) {
                 rlLoading.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "state_err" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+             //   Toast.makeText(getActivity(), "state_err" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -198,11 +209,11 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         if (listState.size() > 0) {
             if (Prefs.getString(PrefsKeys.State, "").isEmpty()) {
                 for (int i = 0, count = listState.size(); i < count; i++) {
-                    tmpData.add(listState.get(i).getStateName());
+                    tmpData.add(listState.get(i).getStateCode());
                 }
             } else {
                 for (int i = 0, count = listState.size(); i < count; i++) {
-                    tmpData.add(listState.get(i).getStateName());
+                    tmpData.add(listState.get(i).getStateCode());
                     if (listState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.State, ""))) {
                         selectedOption = i;
                     }
@@ -218,11 +229,11 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         if (listCity.size() > 0) {
             if (Prefs.getString(PrefsKeys.City, "").isEmpty()) {
                 for (int i = 0, count = listCity.size(); i < count; i++) {
-                    tmpData.add(listCity.get(i).getCityName());
+                    tmpData.add(listCity.get(i).getCityCode());
                 }
             } else {
                 for (int i = 0, count = listCity.size(); i < count; i++) {
-                    tmpData.add(listCity.get(i).getCityName());
+                    tmpData.add(listCity.get(i).getCityCode());
                     if (listCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.City, ""))) {
                         selectedOption = i;
                     }
@@ -291,11 +302,21 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                 SearchTawVehicleResponse searchTawVehicleResponse = response.body();
                 arrPoliceStation.clear();
                 if (searchTawVehicleResponse.getFlag().equals("true")) {
+                    Toast.makeText(getActivity(), "Vehicle found!", Toast.LENGTH_SHORT).show();
+                    SearchTawVehicleData searchTawVehicleData = searchTawVehicleResponse.getData();
+
                     btnNearestPoliceStation.setVisibility(View.GONE);
+                    lytFound.setVisibility(View.VISIBLE);
+                    lblVehicleNumber.setText(searchTawVehicleData.getVehicleNo() + "");
+                    lblAddress.setText(searchTawVehicleData.getTawAddress() + "");
+                    lblSeriesNumber.setText(searchTawVehicleData.getVehicleSeriesNo() + "");
+                    lblTime.setText(searchTawVehicleData.getAddedOn() + "");
 
                 } else {
                     Toast.makeText(getActivity(), "No data found", Toast.LENGTH_LONG).show();
+                    lytFound.setVisibility(View.GONE);
                     btnNearestPoliceStation.setVisibility(View.VISIBLE);
+
                 }
 
                 // isLocationEnabled();
@@ -319,6 +340,16 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
         ft.replace(R.id.fragContainer, fragMap, FragMap.class.getName());
+        ft.commit();
+    }
+
+    private void gotoFragPoliceStations() {
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragNearestPoliceStations fragment = new FragNearestPoliceStations();
+        ft.addToBackStack(FragNearestPoliceStations.class.getName());
+        ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+                R.anim.slide_in_right, R.anim.slide_out_right);
+        ft.replace(R.id.fragContainer, fragment, FragNearestPoliceStations.class.getName());
         ft.commit();
     }
 
@@ -360,7 +391,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                 }
             });
             dialog.show();
-        } else gotoFragMap();
+        } else gotoFragPoliceStations();
     }
 
     private void validateForm() {
@@ -401,6 +432,12 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         } else if (v == txtState) {
             openStateDilaog();
         } else if (v == btnSearch) {
+
+            View view = getActivity().getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
             validateForm();
         } else if (v == btnNearestPoliceStation) {
             isLocationEnabled();

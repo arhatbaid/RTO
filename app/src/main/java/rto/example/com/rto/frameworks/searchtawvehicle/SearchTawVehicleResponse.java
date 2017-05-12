@@ -12,6 +12,9 @@ public class SearchTawVehicleResponse {
     @SerializedName("result")
     @Expose
     private String result;
+    @SerializedName("data")
+    @Expose
+    private SearchTawVehicleData data;
 
     public String getFlag() {
         return flag;
@@ -27,6 +30,14 @@ public class SearchTawVehicleResponse {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public SearchTawVehicleData getData() {
+        return data;
+    }
+
+    public void setData(SearchTawVehicleData data) {
+        this.data = data;
     }
 
 }
