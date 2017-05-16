@@ -82,8 +82,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/veryveryhighPadding"
                 android:orientation="vertical"
-                android:visibility="gone"
-                android:padding="@dimen/common_padding">
+                android:padding="@dimen/common_padding"
+                android:visibility="gone">
 
                 <RelativeLayout
 
@@ -162,6 +162,33 @@
                         android:layout_marginLeft="@dimen/highPadding"
                         android:layout_marginTop="@dimen/large_space"
                         android:layout_toRightOf="@+id/lblAdreessTitle"
+                        android:gravity="right"
+                        android:textSize="@dimen/common_padding" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lblOfficerTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/large_space"
+                        android:text="Officer Name"
+                        android:textSize="@dimen/common_padding"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/lblOfficer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginLeft="@dimen/highPadding"
+                        android:layout_marginTop="@dimen/large_space"
+                        android:layout_toRightOf="@+id/lblOfficerTitle"
                         android:gravity="right"
                         android:textSize="@dimen/common_padding" />
 

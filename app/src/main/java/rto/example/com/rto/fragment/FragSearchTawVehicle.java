@@ -70,6 +70,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
     private TextView lblSeriesNumber;
     private TextView lblAddress;
     private TextView lblTime;
+    private TextView lblOfficer;
 
     private ArrayList<GetStateData> listState = new ArrayList<>();
     private ArrayList<GetCityData> listCity = new ArrayList<>();
@@ -111,6 +112,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
         lblSeriesNumber = (TextView) view.findViewById(R.id.lblSeriesNumber);
         lblAddress = (TextView) view.findViewById(R.id.lblAddress);
         lblTime = (TextView) view.findViewById(R.id.lblTime);
+        lblOfficer = (TextView) view.findViewById(R.id.lblOfficer);
 
         txtSeriesNumber.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
         btnSearch.setOnClickListener(this);
@@ -311,6 +313,7 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
                     lblAddress.setText(searchTawVehicleData.getTawAddress() + "");
                     lblSeriesNumber.setText(searchTawVehicleData.getVehicleSeriesNo() + "");
                     lblTime.setText(searchTawVehicleData.getAddedOn() + "");
+                    lblOfficer.setText(searchTawVehicleData.getOfficerName() + "");
 
                 } else {
                     Toast.makeText(getActivity(), "No data found", Toast.LENGTH_LONG).show();

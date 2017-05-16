@@ -76,7 +76,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
     private ActHomeOfficer root;
 
     private static final int REQUEST_IMAGE = 100;
-    private static final int STORAGE=1;
+    private static final int STORAGE = 1;
     private String ANDROID_DATA_DIR;
     private static File destination;
 
@@ -194,7 +194,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                 countDownTimer.cancel();
                 lytTimer.setVisibility(View.GONE);
             }
-        }else if (v == imgCamara) {
+        } else if (v == imgCamara) {
             checkPermission();
         }
     }
@@ -208,7 +208,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
             options.inSampleSize = 10;
 
             // Picasso requires permission.WRITE_EXTERNAL_STORAGE
-           // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
+            // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
             txtVehicleNumber.setText("Processing");
 
             AsyncTask.execute(new Runnable() {
@@ -267,11 +267,13 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
             takePicture();
         }
     }
+
     public String dateToString(Date date, String format) {
         SimpleDateFormat df = new SimpleDateFormat(format, Locale.getDefault());
 
         return df.format(date);
     }
+
     public void takePicture() {
         // Use a folder to store all results
         File folder = new File(Environment.getExternalStorageDirectory() + "/OpenALPR/");
@@ -292,7 +294,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case STORAGE:{
+            case STORAGE: {
                 Map<String, Integer> perms = new HashMap<>();
                 // Initial
                 perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
@@ -369,8 +371,12 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                     txtVehicleName.setText("");
                     //getActivity().getSupportFragmentManager().popBackStack();
                 } else if (addTawVehicleResponse.getFlag().equals("false")) {
-                    // Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
-                    startTimer();
+
+                    if (addTawVehicleResponse.getDeclaration().equals("DUPLICATE_ENTRY")) {
+
+                        Toast.makeText(getActivity(), addTawVehicleResponse.getMsg(), Toast.LENGTH_SHORT).show();
+                    } else
+                        startTimer();
                 }
             }
 
@@ -404,7 +410,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
             @Override
             public void onFailure(Call<GetStateResponse> call, Throwable t) {
                 rlLoading.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "state_err" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(getActivity(), "state_err" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -522,7 +528,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                     txtVehicleCity.setError(null);
                     txtVehicleCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtVehicleCity.setText(listVehicleCity.get(which).getCityCode());
+                    txtVehicleCity.setText(listVehicleCity.get(which).getCityName());
                     txtVehicleCity.setError(null);
                     VEHICEL_CITY_ID = listVehicleCity.get(which).getCityId();
                     Prefs.putString(PrefsKeys.VehicleCity, strName);
@@ -719,21 +725,54 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
     }
 
     public void startTimer() {
+
+
         countDownTimer = new CountDownTimer(60 * 1000, 1000) {
+            AlertDialog dialog;
 
             public void onTick(long millisUntilFinished) {
-                lytTimer.setVisibility(View.VISIBLE);
+                lytTimer.setVisibility(View.GONE);
                 lblCount.setText("" + millisUntilFinished / 1000);
+                dialog = new AlertDialog.Builder(getActivity())
+                        .setMessage("" + millisUntilFinished / 1000)
+
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                countDownTimer.cancel();
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
             }
 
             public void onFinish() {
                 lytTimer.setVisibility(View.GONE);
+                dialog.dismiss();
                 callAddTawVehicle("0");
                 // lblCount.setText("done!");
             }
 
         }.start();
 
+    }
+
+    private void showDialog(String msg) {
+        new AlertDialog.Builder(getActivity())
+                .setMessage("")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 
