@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -19,10 +18,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,16 +31,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.pixplicity.easyprefs.library.Prefs;
 
-import org.openalpr.OpenALPR;
-import org.openalpr.model.Results;
-import org.openalpr.model.ResultsError;
-
 import java.io.File;
-import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +49,6 @@ import rto.example.com.rto.R;
 import rto.example.com.rto.activity.ActHomeOfficer;
 import rto.example.com.rto.frameworks.addtawvehicle.AddTawVehicleRequest;
 import rto.example.com.rto.frameworks.addtawvehicle.AddTawVehicleResponse;
-import rto.example.com.rto.frameworks.addvehicle.AddVehicleRequest;
-import rto.example.com.rto.frameworks.addvehicle.AddVehicleResponse;
 import rto.example.com.rto.frameworks.city.GetCityData;
 import rto.example.com.rto.frameworks.city.GetCityRequest;
 import rto.example.com.rto.frameworks.city.GetCityResponse;
@@ -211,7 +201,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
             // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
             txtVehicleNumber.setText("Processing");
 
-            AsyncTask.execute(new Runnable() {
+          /*  AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     String result = OpenALPR.Factory.create(getActivity(), ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
@@ -250,7 +240,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
 
                     progress.dismiss();
                 }
-            });
+            });*/
         }
     }
 
@@ -357,7 +347,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
 
                 AddTawVehicleResponse addTawVehicleResponse = response.body();
                 if (addTawVehicleResponse.getFlag().equals("true")) {
-                    Toast.makeText(getActivity(), "Vehicle registered successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Vehicle tawed successfully!", Toast.LENGTH_SHORT).show();
                     //   startTimer();
                     txtVehicleState.setText("");
                     txtVehicleCity.setText("");
@@ -465,12 +455,12 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
         if (listVehicleState.size() > 0) {
             if (Prefs.getString(PrefsKeys.VehicleState, "").isEmpty()) {
                 for (int i = 0, count = listVehicleState.size(); i < count; i++) {
-                    tmpData.add(listVehicleState.get(i).getStateName());
+                    tmpData.add(listVehicleState.get(i).getStateCode());
                 }
             } else {
                 for (int i = 0, count = listVehicleState.size(); i < count; i++) {
-                    tmpData.add(listVehicleState.get(i).getStateName());
-                    if (listVehicleState.get(i).getStateName().equalsIgnoreCase(Prefs.getString(PrefsKeys.VehicleState, ""))) {
+                    tmpData.add(listVehicleState.get(i).getStateCode());
+                    if (listVehicleState.get(i).getStateCode().equalsIgnoreCase(Prefs.getString(PrefsKeys.VehicleState, ""))) {
                         selectedOption = i;
                     }
                 }
@@ -485,12 +475,12 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
         if (listVehicleCity.size() > 0) {
             if (Prefs.getString(PrefsKeys.VehicleCity, "").isEmpty()) {
                 for (int i = 0, count = listVehicleCity.size(); i < count; i++) {
-                    tmpData.add(listVehicleCity.get(i).getCityName());
+                    tmpData.add(listVehicleCity.get(i).getCityCode());
                 }
             } else {
                 for (int i = 0, count = listVehicleCity.size(); i < count; i++) {
-                    tmpData.add(listVehicleCity.get(i).getCityName());
-                    if (listVehicleCity.get(i).getCityName().equalsIgnoreCase(Prefs.getString(PrefsKeys.VehicleCity, ""))) {
+                    tmpData.add(listVehicleCity.get(i).getCityCode());
+                    if (listVehicleCity.get(i).getCityCode().equalsIgnoreCase(Prefs.getString(PrefsKeys.VehicleCity, ""))) {
                         selectedOption = i;
                     }
                 }
@@ -682,7 +672,7 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                     txtState.setError(null);
                     txtCity.setError(null);
                 } else if (type.equalsIgnoreCase(Constants.CITY)) {
-                    txtCity.setText(listVehicleCity.get(which).getCityCode());
+                    txtCity.setText(listCity.get(which).getCityName());
                     txtCity.setError(null);
                     CITY_ID = listCity.get(which).getCityId();
                     Prefs.putString(PrefsKeys.City, strName);
@@ -726,7 +716,6 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
 
     public void startTimer() {
 
-
         countDownTimer = new CountDownTimer(60 * 1000, 1000) {
             AlertDialog dialog;
 
@@ -734,8 +723,8 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                 lytTimer.setVisibility(View.GONE);
                 lblCount.setText("" + millisUntilFinished / 1000);
                 dialog = new AlertDialog.Builder(getActivity())
+                        .setCancelable(false)
                         .setMessage("" + millisUntilFinished / 1000)
-
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -743,8 +732,9 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                                 // do nothing
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
+                WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+                lp.dimAmount = 0.7f;
             }
 
             public void onFinish() {

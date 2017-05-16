@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,7 +21,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +33,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.pixplicity.easyprefs.library.Prefs;
-
-import org.openalpr.OpenALPR;
-import org.openalpr.model.Results;
-import org.openalpr.model.ResultsError;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -73,8 +65,6 @@ import rto.example.com.rto.helper.AppHelper;
 import rto.example.com.rto.helper.Constants;
 import rto.example.com.rto.helper.PrefsKeys;
 import rto.example.com.rto.webhelper.WebAPIClient;
-
-import static android.Manifest.permission_group.STORAGE;
 
 public class FragEditRegisterVehicle extends Fragment implements View.OnClickListener {
 
@@ -237,7 +227,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
             txtVehicleNumber.setText("Processing");
 
-            AsyncTask.execute(new Runnable() {
+            /*AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     String result = OpenALPR.Factory.create(getActivity(), ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
@@ -278,7 +268,7 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
                     progress.dismiss();
                 }
             });
-        }
+*/        }
     }
 
     private void checkPermission() {

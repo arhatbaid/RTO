@@ -309,7 +309,13 @@ public class FragSearchTawVehicle extends Fragment implements View.OnClickListen
 
                     btnNearestPoliceStation.setVisibility(View.GONE);
                     lytFound.setVisibility(View.VISIBLE);
-                    lblVehicleNumber.setText(searchTawVehicleData.getVehicleNo() + "");
+                    String vehicletype = "";
+                    if (searchTawVehicleData.getVehicleType().equals("2")){
+                        vehicletype = "Car";
+                    }else {
+                        vehicletype = "Bike";
+                    }
+                    lblVehicleNumber.setText(vehicletype);
                     lblAddress.setText(searchTawVehicleData.getTawAddress() + "");
                     lblSeriesNumber.setText(searchTawVehicleData.getVehicleSeriesNo() + "");
                     lblTime.setText(searchTawVehicleData.getAddedOn() + "");

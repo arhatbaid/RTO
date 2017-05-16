@@ -39,6 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
+                        android:gravity="center"
                         android:paddingLeft="@dimen/veryveryhighPadding"
                         android:layout_weight="1"
                         android:textSize="30sp" />
@@ -56,6 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/vehicle_name"
+                    android:visibility="gone"
                     android:inputType="text|textNoSuggestions" />
 
 
@@ -205,6 +207,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/small_padding"
         android:layout_marginTop="@dimen/small_padding"
+        android:layout_marginRight="@dimen/common_padding"
+        android:layout_marginLeft="@dimen/common_padding"
         android:background="@color/colorPrimaryDark"
         android:text="taw vehicle"
         android:textColor="@android:color/white" />

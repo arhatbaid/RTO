@@ -1,1 +1,1 @@
-include ':app', ':openalpr'
+include ':app'
