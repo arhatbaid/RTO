@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -226,6 +227,19 @@ public class FragEditRegisterVehicle extends Fragment implements View.OnClickLis
             // Picasso requires permission.WRITE_EXTERNAL_STORAGE
             // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
             txtVehicleNumber.setText("Processing");
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    root.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                            Toast.makeText(root, "Could not parse data, please enter it manually", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            },2000);
 
             /*AsyncTask.execute(new Runnable() {
                 @Override

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +22,6 @@ import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -200,6 +200,19 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
             // Picasso requires permission.WRITE_EXTERNAL_STORAGE
             // Picasso.with(this).load(destination).fit().centerCrop().into(imageView);
             txtVehicleNumber.setText("Processing");
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    root.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.dismiss();
+                            Toast.makeText(root, "Could not parse data, please enter it manually", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            },2000);
 
           /*  AsyncTask.execute(new Runnable() {
                 @Override
@@ -732,9 +745,8 @@ public class FragAddTawVehicle extends Fragment implements View.OnClickListener 
                                 // do nothing
                             }
                         })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
-                WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-                lp.dimAmount = 0.7f;
             }
 
             public void onFinish() {
